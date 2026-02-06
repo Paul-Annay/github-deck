@@ -1,0 +1,49 @@
+# GitHub Repo Analytics Dashboard - Context & Requirements
+
+## 1. Product Context
+**Goal**: A conversational GitHub analytics dashboard where users talk to their repository to generate UI on demand.
+**Core Value**: "Conversation drives UI, not the other way around." Users interact via natural language to generate charts, tables, and comparisons without clicking filters.
+
+### Key Features
+- **Repo Connection**: Users input `username/repo` to fetch data (public repos, read-only).
+- **Conversational Analytics**: 
+  - Queries like "Show commit activity" or "Compare with Next.js".
+  - Tambo interprets intent and generates UI components on the fly.
+- **Dynamic UI**:
+  - Components (Line Charts, Bar Charts, Tables) are generated and persisted.
+  - "Stateful" conversation: updates refine existing UI (e.g., "now show last 30 days").
+- **UI Control**: Users can add, remove, or reorder components via chat.
+
+## 2. Functional Context
+### Rules & Constraints
+- **Ambiguity**: If a query is vague (e.g., "Show activity"), ask clarifying questions using Tambo's intent parsing.
+- **Data Handling**:
+  - Handle low-activity or empty repos gracefully ("Not enough data" states).
+  - Comparison limited to 2 repos max.
+  - If languages differ in comparison, scope to shared metrics (commits, contributors).
+- **Performance**:
+  - **Rate Limits**: Handle GitHub API limits gracefully (system message, no crashes).
+  - **Data Freshness**: clearly label fetch time. No real-time polling.
+- **Security**: Public repositories only. No user auth required for demo.
+
+## 3. Technical Context
+### Stack
+- **Frontend**: Next.js (App Router), TypeScript, Tailwind CSS.
+- **UI**: ShadCN UI (base), Recharts or Chart.js (charts).
+- **AI/Agent**: **Tambo SDK** for:
+  - Generative UI components (dynamic charts/tables).
+  - Interactable components (persistent UI blocks).
+  - Intent classification and component management.
+
+### Architecture
+- **Flow**: User Prompt -> Tambo Intent Parsing -> UI Action Decision -> Component Generation/Mutation -> Render.
+- **Data Layer**: GitHub API (or MCP). Normalized data structure (Commits, Contributors, Issues, PRs).
+- **State**: Lightweight store (Zustand/Context) for active repo and rendered components list. In-memory state with optional localStorage.
+
+### AI Guidelines (Tambo Best Practices)
+From `coding-agent-generative-ui-rules`:
+- Props are `undefined` during streaming; use `?.` and `??`.
+- Use `useTamboComponentState` for state the assistant needs to see.
+- Use `useTamboStreamStatus` for controlling UI during streaming.
+- Stable React keys (generate IDs client-side, not AI-generated during stream).
+- Use `.describe()` in Zod schemas to guide prop generation.

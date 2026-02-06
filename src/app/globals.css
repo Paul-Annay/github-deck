@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Tailwind CSS Variables customized with tambo colors */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Tambo Specific Variables needed for tambo components */
+  --color-container: var(--container);
+  --color-backdrop: var(--backdrop);
+  --color-muted-backdrop: var(--muted-backdrop);
+}
+
+:root {
+  /* Default is Dark Mode for Command Deck Theme */
+  --background: 240 10% 4%; /* #0a0a0d */
+  --foreground: 0 0% 88%;   /* #e0e0e0 */
+  
+  --card: 240 6% 10%;       /* #1e1e24 (Panel Gray) */
+  --card-foreground: 0 0% 88%;
+
+  --popover: 240 10% 4%;
+  --popover-foreground: 0 0% 88%;
+
+  --primary: 184 100% 50%;  /* #00f0ff (Neon Cyan) */
+  --primary-foreground: 240 10% 4%;
+
+  --secondary: 41 100% 50%; /* #ffb000 (Amber) */
+  --secondary-foreground: 240 10% 4%;
+
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+
+  --accent: 240 6% 10%;
+  --accent-foreground: 184 100% 50%;
+
+  --destructive: 0 84% 60%; /* #ff2a2a (Red) */
+  --destructive-foreground: 0 0% 98%;
+
+  --border: 184 100% 50%;   /* Neon Cyan Borders */
+  --input: 240 4% 16%;
+  --ring: 184 100% 50%;
+
+  --chart-1: 184 100% 50%;
+  --chart-2: 41 100% 50%;
+  --chart-3: 0 84% 60%;
+  --chart-4: 280 65% 60%;
+  --chart-5: 160 60% 45%;
+
+  /* Tambo */
+  --container: 240 10% 4%;
+  --backdrop: 240 10% 4% / 0.8;
+  --muted-backdrop: 240 10% 4% / 0.4;
+  
+  --radius: 0px; /* Sharp edges */
+  --panel-left-width: 500px;
+  --panel-right-width: 500px;
+  --sidebar-width: 3rem;
+}
+
+.dark {
+  /* Inherits root because we forced dark mode values in root, but keeping explicitly just in case */
+  --background: 240 10% 4%;
+  --foreground: 0 0% 88%;
+  --card: 240 6% 10%;
+  --card-foreground: 0 0% 88%;
+  --popover: 240 10% 4%;
+  --popover-foreground: 0 0% 88%;
+  --primary: 184 100% 50%;
+  --primary-foreground: 240 10% 4%;
+  --secondary: 41 100% 50%;
+  --secondary-foreground: 240 10% 4%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;
+  --accent: 240 6% 10%;
+  --accent-foreground: 184 100% 50%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 184 100% 50%;
+  --input: 240 4% 16%;
+  --ring: 184 100% 50%;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground h-screen w-screen overflow-hidden;
+    font-family: var(--font-geist-mono), monospace; /* Default to Mono */
+    background-image: 
+      radial-gradient(circle at 50% 50%, rgba(20, 20, 30, 0) 0%, rgba(0, 0, 0, 0.8) 100%),
+      linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px), 
+      linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+    background-size: 100% 100%, 40px 40px, 40px 40px;
+  }
+}
+
+/* Animations */
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes flicker {
+  0% { opacity: 0.95; }
+  5% { opacity: 0.85; }
+  10% { opacity: 0.95; }
+  100% { opacity: 0.98; }
+}
+
+.scanline::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: 
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 9999; /* Ensure it's on top of everything */
+  background-size: 100% 3px, 3px 100%;
+  pointer-events: none;
+  animation: flicker 4s infinite;
+}
+
+@keyframes flash {
+  0%, 100% { background-color: transparent; }
+  50% { background-color: rgba(0, 240, 255, 0.2); }
+}
+
+.animate-flash {
+  animation: flash 1s ease-in-out;
+}
+
+.animate-thinking-gradient {
+  background: linear-gradient(90deg, #1e1e24 0%, #00f0ff 50%, #1e1e24 100%);
+  background-size: 200% 100%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: thinking-gradient 2s linear infinite;
+}

@@ -1,0 +1,42 @@
+# Brand Guidelines: The GitHub Command Deck
+
+## 1. Design Philosophy
+**Theme**: "The GitHub Command Deck"
+**Vibe**: Imperial control room / Star Destroyer bridge. Serious, high-stakes, tactical.
+**Goal**: The user should feel like they are *commanding* a system, not just viewing a dashboard.
+
+## 2. Visual Identity
+
+### Color Palette
+- **Backgrounds**: Deep Space Black (`#0a0a0d`), Void Gray (`#121214`), Panel Gray (`#1e1e24`).
+- **Primary Accents**: 
+  - **Cyan (Systems Active)**: `#00f0ff` (Glow effects).
+  - **Amber (Status/Warning)**: `#ffb000`.
+  - **Red (Alert/Critical)**: `#ff2a2a`.
+- **Text**: Off-white / Silver (`#e0e0e0`) to reduce eye strain on dark backgrounds.
+
+### Typography
+- **Primary**: Monospace font for data and headers (e.g., `JetBrains Mono`, `Fira Code`, or `Geist Mono`).
+- **Styling**: Uppercase for labels and headers (e.g., `REPOSITORY STATUS: ONLINE`).
+
+### Layout & Structure
+- **Modular Panels**: Everything lives in "modules" with distinct borders.
+- **Grids**: Subtle grid overlays (low opacity) to give a radar/scanner feel.
+- **Borders**: Thin, sharp borders. No rounded corners (or very minimal `2px`).
+
+## 3. Micro-Interactions & Animation
+- **Entrance**: Charts don't just fade in; they "power on" (scan lines, flicker, or slide out).
+- **Loading**: "Scanning sector...", "Decrypting intel...", "Establishing link...".
+- **Hover**: High-contrast active states. Borders glow on selection.
+
+## 4. Tone of Voice
+- **Systematic & Tactical**:
+  - "Repo Comparison" -> "FLEET COMPARISON"
+  - "Error" -> "COMMUNICATION DISRUPTED"
+  - "Inactive" -> "SECTOR ABANDONED"
+- **Feedback**: Immediate, terse, and confirmed.
+
+## 5. UI Components Reference
+- **Command Console**: The chat interface. Fixed at bottom or distinct side panel. Styled like a terminal input.
+- **Data Visualizations**: Recharts/Chart.js with custom themes (hide default grids, use neon strokes).
+- **Control Indicators**: Small decorative elements (blinking lights, tech lines) to sell the aesthetic.
