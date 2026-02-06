@@ -21,5 +21,8 @@ globs: **/*.{tsx,jsx}
 * **Hook Limit:** Max **200 lines**.
 * **Logic:** Extract UI logic into custom hooks to keep components lean.
 
-## 4. Imports
+## 4. Use Semantic Markup
+* ** Usage of header, main, article, section etc are encouraged over plain div and span.
+
+## 5. Imports
 * **Aliasing:** Always use `@/` alias. Relative imports (`../../`) are forbidden.
