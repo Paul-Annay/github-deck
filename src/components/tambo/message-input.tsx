@@ -677,10 +677,10 @@ const MessageInputInternal = React.forwardRef<
       >
         <div
           className={cn(
-            "relative flex flex-col rounded-xl bg-background shadow-md p-2 px-3",
+            "relative flex flex-col rounded-xl p-2 px-3 bg-transparent transition-all duration-300",
             isDragging
-              ? "border border-dashed border-emerald-400"
-              : "border border-border",
+              ? "border-2 border-dashed border-emerald-400 shadow-none"
+              : "border-2 border-primary/50 shadow-[0_0_10px_rgba(0,240,255,0.3)] focus-within:border-primary focus-within:shadow-[0_0_15px_rgba(0,240,255,0.5)]",
           )}
         >
           {isDragging && (
@@ -886,7 +886,7 @@ const MessageInputTextarea = ({
         onAddImage={handleAddImage}
         placeholder={placeholder}
         disabled={!isIdle || isUpdatingToken}
-        className="bg-background text-foreground"
+        className="bg-transparent text-foreground"
         onSearchResources={setResourceSearch}
         resources={resourceItems}
         onSearchPrompts={setPromptSearch}
@@ -978,7 +978,7 @@ const MessageInputPlainTextarea = ({
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       className={cn(
-        "flex-1 p-3 rounded-t-lg bg-background text-foreground resize-none text-sm min-h-[82px] max-h-[40vh] focus:outline-none placeholder:text-muted-foreground/50",
+        "flex-1 p-3 rounded-t-lg text-foreground resize-none text-sm min-h-[82px] bg-transparent max-h-[40vh] focus:outline-none placeholder:text-muted-foreground/50",
         className,
       )}
       disabled={isPending || isUpdatingToken}
@@ -1034,7 +1034,7 @@ const MessageInputSubmitButton = React.forwardRef<
   };
 
   const buttonClasses = cn(
-    "w-10 h-10 bg-foreground text-background rounded-lg hover:bg-foreground/90 disabled:opacity-50 flex items-center justify-center enabled:cursor-pointer",
+    "w-10 h-10 bg-foreground text-background rounded-lg border-2 border-primary/50 transition-all duration-300 hover:bg-foreground/90 hover:border-primary hover:shadow-[0_0_15px_rgba(0,240,255,0.6)] disabled:opacity-50 flex items-center justify-center enabled:cursor-pointer shadow-[0_0_8px_rgba(0,240,255,0.3)]",
     className,
   );
 
@@ -1069,7 +1069,7 @@ const MCPIcon = () => {
       viewBox="0 0 24 24"
       width="24"
       height="24"
-      color="#000000"
+      color="#fff"
       fill="none"
     >
       <path
@@ -1112,7 +1112,7 @@ const MessageInputMcpConfigButton = React.forwardRef<
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const buttonClasses = cn(
-    "w-10 h-10 rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "w-10 h-10 rounded-lg border-2 border-primary/50 bg-transparent text-foreground transition-all duration-300 hover:bg-muted hover:border-primary hover:shadow-[0_0_10px_rgba(0,240,255,0.5)] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background shadow-[0_0_5px_rgba(0,240,255,0.2)]",
     className,
   );
 
@@ -1240,7 +1240,7 @@ const MessageInputFileButton = React.forwardRef<
   };
 
   const buttonClasses = cn(
-    "w-10 h-10 rounded-lg border border-border bg-background text-foreground transition-colors hover:bg-muted disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+    "w-10 h-10 rounded-lg border-2 border-primary/50 bg-transparent text-foreground transition-all duration-300 hover:bg-muted hover:border-primary hover:shadow-[0_0_10px_rgba(0,240,255,0.5)] disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background shadow-[0_0_5px_rgba(0,240,255,0.2)]",
     className,
   );
 

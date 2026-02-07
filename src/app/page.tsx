@@ -75,11 +75,11 @@ export default function Home() {
           <CommandPanel
             title="MAIN VIEWSCREEN"
             className="lg:col-span-8 flex flex-col min-h-0"
-            status="standby"
+            status="active"
           >
-            <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground/50 gap-4 p-4">
-              <div className="w-24 h-24 rounded-full border-2 border-dashed border-current animate-[spin_10s_linear_infinite]" />
-              <p className="font-mono text-sm tracking-widest animate-pulse">
+            <div className="flex-1 flex flex-col items-center justify-center text-primary/70 gap-4 p-4">
+              <div className="w-24 h-24 rounded-full border-2 border-dashed border-current animate-[spin_10s_linear_infinite] drop-shadow-[0_0_10px_rgba(0,240,255,0.5)]" />
+              <p className="font-mono text-sm tracking-widest animate-pulse drop-shadow-[0_0_5px_rgba(0,240,255,0.5)]">
                 AWAITING DATA STREAM...
               </p>
             </div>

@@ -25,15 +25,15 @@ const CommandPanel = ({
   return (
     <section
       className={cn(
-        "relative flex flex-col border-2 bg-transparent overflow-hidden transition-all duration-300",
-        status === "active" && "shadow-[0_0_15px_rgba(0,240,255,0.15)]",
+        "relative flex flex-col border-2 bg-transparent overflow-hidden transition-all duration-300 shadow-[0_0_10px_rgba(0,240,255,0.3)] border-primary/50",
+        status === "active" && "shadow-[0_0_15px_rgba(0,240,255,0.5)] border-primary",
         className,
       )}
       aria-label={title || "System Module"}
       {...props}
     >
       {/* Header Bar */}
-      <header className="flex items-center justify-between px-4 py-2 border-b border-inherit bg-transparent relative z-20">
+      <header className="flex items-center justify-between px-4 py-2 border-b border-primary/30 bg-transparent relative z-20 shadow-[0_1px_10px_rgba(0,240,255,0.1)]">
         <div className="flex items-center gap-3">
           {/* Status Light */}
           <div
