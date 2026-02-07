@@ -565,7 +565,7 @@ const SamplingSubThread = ({
         aria-controls={samplingDetailsId}
         onClick={() => setIsExpanded(!isExpanded)}
         className={cn(
-          "flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md p-2 select-none w-fit",
+          "cursor-target flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md p-2 select-none w-fit",
         )}
       >
         <span>{titleText}</span>
@@ -682,7 +682,7 @@ const ReasoningInfo = React.forwardRef<HTMLDivElement, ReasoningInfoProps>(
             aria-controls={reasoningDetailsId}
             onClick={() => setIsExpanded(!isExpanded)}
             className={cn(
-              "flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md px-3 py-1 select-none w-fit",
+              "cursor-target flex items-center gap-1 cursor-pointer hover:bg-muted-foreground/10 rounded-md px-3 py-1 select-none w-fit",
             )}
           >
             <span className={isLoading ? "animate-thinking-gradient" : ""}>
@@ -1030,6 +1030,7 @@ const MessageRenderedComponentArea = React.forwardRef<
         (canvasExists ? (
           <div className="flex justify-start pl-4">
             <button
+              className="cursor-target"
               onClick={() => {
                 if (typeof window !== "undefined") {
                   window.dispatchEvent(

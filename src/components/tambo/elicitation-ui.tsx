@@ -49,7 +49,7 @@ const BooleanField: React.FC<FieldProps> = ({
           autoFocus={autoFocus}
           onClick={() => onChange(true)}
           className={cn(
-            "flex-1 px-4 py-2 rounded-lg border transition-colors",
+            "cursor-target flex-1 px-4 py-2 rounded-lg border transition-colors",
             boolValue === true
               ? "bg-accent text-accent-foreground border-accent"
               : "bg-background border-border hover:bg-muted",
@@ -61,7 +61,7 @@ const BooleanField: React.FC<FieldProps> = ({
           type="button"
           onClick={() => onChange(false)}
           className={cn(
-            "flex-1 px-4 py-2 rounded-lg border transition-colors",
+            "cursor-target flex-1 px-4 py-2 rounded-lg border transition-colors",
             boolValue === false
               ? "bg-accent text-accent-foreground border-accent"
               : "bg-background border-border hover:bg-muted",
@@ -107,7 +107,7 @@ const EnumField: React.FC<FieldProps> = ({
             autoFocus={autoFocus && index === 0}
             onClick={() => onChange(option)}
             className={cn(
-              "px-4 py-2 rounded-lg border transition-colors",
+              "cursor-target px-4 py-2 rounded-lg border transition-colors",
               stringValue === option
                 ? "bg-accent text-accent-foreground border-accent"
                 : "bg-background border-border hover:bg-muted",
@@ -173,7 +173,7 @@ const StringField: React.FC<FieldProps> = ({
         value={stringValue}
         onChange={(e) => onChange(e.target.value)}
         className={cn(
-          "w-full px-3 py-2 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2",
+          "cursor-target w-full px-3 py-2 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2",
           hasError
             ? "border-destructive focus:ring-destructive"
             : "border-border focus:ring-accent",
@@ -235,7 +235,7 @@ const NumberField: React.FC<FieldProps> = ({
           );
         }}
         className={cn(
-          "w-full px-3 py-2 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2",
+          "cursor-target w-full px-3 py-2 rounded-lg border bg-background text-foreground focus:outline-none focus:ring-2",
           hasError
             ? "border-destructive focus:ring-destructive"
             : "border-border focus:ring-accent",
@@ -542,14 +542,14 @@ export const ElicitationUI: React.FC<ElicitationUIProps> = ({
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 text-sm rounded-lg border border-destructive text-destructive hover:bg-destructive/10 transition-colors"
+            className="cursor-target px-4 py-2 text-sm rounded-lg border border-destructive text-destructive hover:bg-destructive/10 transition-colors"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={handleDecline}
-            className="px-4 py-2 text-sm rounded-lg border border-border bg-background hover:bg-muted transition-colors"
+            className="cursor-target px-4 py-2 text-sm rounded-lg border border-border bg-background hover:bg-muted transition-colors"
           >
             Decline
           </button>
@@ -597,14 +597,14 @@ export const ElicitationUI: React.FC<ElicitationUIProps> = ({
         <button
           type="button"
           onClick={handleCancel}
-          className="px-4 py-2 text-sm rounded-lg border border-destructive text-destructive hover:bg-destructive/10 transition-colors"
+          className="cursor-target px-4 py-2 text-sm rounded-lg border border-destructive text-destructive hover:bg-destructive/10 transition-colors"
         >
           Cancel
         </button>
         <button
           type="button"
           onClick={handleDecline}
-          className="px-4 py-2 text-sm rounded-lg border border-border bg-background hover:bg-muted transition-colors"
+          className="cursor-target px-4 py-2 text-sm rounded-lg border border-border bg-background hover:bg-muted transition-colors"
         >
           Decline
         </button>
@@ -612,7 +612,7 @@ export const ElicitationUI: React.FC<ElicitationUIProps> = ({
           type="button"
           onClick={handleAccept}
           disabled={!isValid}
-          className="px-6 py-2 text-sm rounded-lg bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="cursor-target px-6 py-2 text-sm rounded-lg bg-foreground text-background hover:bg-foreground/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           Submit
         </button>

@@ -112,7 +112,7 @@ const CodeHeader = ({
       <span className="lowercase text-muted-foreground">{language}</span>
       <button
         onClick={copyToClipboard}
-        className="p-1 rounded-md hover:bg-backdrop transition-colors cursor-pointer"
+        className="cursor-target p-1 rounded-md hover:bg-backdrop transition-colors cursor-pointer"
         title={error ? "Failed to copy" : "Copy code"}
       >
         {Icon}

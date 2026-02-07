@@ -978,7 +978,7 @@ const MessageInputPlainTextarea = ({
       onKeyDown={handleKeyDown}
       onPaste={handlePaste}
       className={cn(
-        "flex-1 p-3 rounded-t-lg text-foreground resize-none text-sm min-h-[82px] bg-transparent max-h-[40vh] focus:outline-none placeholder:text-muted-foreground/50",
+        "cursor-target flex-1 p-3 rounded-t-lg text-foreground resize-none text-sm min-h-[82px] bg-transparent max-h-[40vh] focus:outline-none placeholder:text-muted-foreground/50",
         className,
       )}
       disabled={isPending || isUpdatingToken}
@@ -1044,7 +1044,7 @@ const MessageInputSubmitButton = React.forwardRef<
       type={showCancelButton ? "button" : "submit"}
       disabled={isUpdatingToken}
       onClick={showCancelButton ? handleCancel : undefined}
-      className={buttonClasses}
+      className={cn(buttonClasses, "cursor-target")}
       aria-label={showCancelButton ? "Cancel message" : "Send message"}
       data-slot={
         showCancelButton ? "message-input-cancel" : "message-input-submit"
@@ -1123,7 +1123,7 @@ const MessageInputMcpConfigButton = React.forwardRef<
           ref={ref}
           type="button"
           onClick={() => setIsModalOpen(true)}
-          className={buttonClasses}
+          className={cn(buttonClasses, "cursor-target")}
           aria-label="Open MCP Configuration"
           data-slot="message-input-mcp-config"
           {...props}
@@ -1250,7 +1250,7 @@ const MessageInputFileButton = React.forwardRef<
         ref={ref}
         type="button"
         onClick={handleClick}
-        className={buttonClasses}
+        className={cn(buttonClasses, "cursor-target")}
         aria-label="Attach Images"
         data-slot="message-input-file-button"
         {...props}
@@ -1262,7 +1262,7 @@ const MessageInputFileButton = React.forwardRef<
           accept={accept}
           multiple={multiple}
           onChange={handleFileChange}
-          className="hidden"
+          className="cursor-target hidden"
           aria-hidden="true"
         />
       </button>
@@ -1404,7 +1404,7 @@ const ImageContextBadge: React.FC<ImageContextBadgeProps> = ({
       onClick={onToggle}
       aria-expanded={isExpanded}
       className={cn(
-        "relative flex items-center rounded-lg border overflow-hidden",
+        "cursor-target relative flex items-center rounded-lg border overflow-hidden",
         "border-border bg-background hover:bg-muted cursor-pointer",
         "transition-[width,height,padding] duration-200 ease-in-out",
         isExpanded ? "w-40 h-28 p-0" : "w-32 h-9 pl-3 pr-8 gap-2",
@@ -1448,7 +1448,7 @@ const ImageContextBadge: React.FC<ImageContextBadgeProps> = ({
         e.stopPropagation();
         onRemove();
       }}
-      className="absolute -top-1 -right-1 w-5 h-5 bg-background border border-border text-muted-foreground rounded-full flex items-center justify-center hover:bg-muted hover:text-foreground transition-colors shadow-sm z-10"
+      className="cursor-target absolute -top-1 -right-1 w-5 h-5 bg-background border border-border text-muted-foreground rounded-full flex items-center justify-center hover:bg-muted hover:text-foreground transition-colors shadow-sm z-10"
       aria-label={`Remove ${displayName}`}
     >
       <X className="w-3 h-3" />

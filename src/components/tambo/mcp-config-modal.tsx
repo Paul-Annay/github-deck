@@ -190,7 +190,7 @@ function MyApp() {
           <h2 className="text-lg font-semibold">MCP Server Configuration</h2>
           <button
             onClick={onClose}
-            className="hover:bg-muted rounded-lg transition-colors cursor-pointer"
+            className="cursor-target hover:bg-muted rounded-lg transition-colors cursor-pointer"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -202,7 +202,7 @@ function MyApp() {
           <div className="mb-6 bg-container border border-muted rounded-lg">
             <button
               onClick={() => setShowInstructions(!showInstructions)}
-              className="w-full flex items-center justify-between p-2 hover:bg-muted transition-colors cursor-pointer"
+              className="cursor-target w-full flex items-center justify-between p-2 hover:bg-muted transition-colors cursor-pointer"
               type="button"
             >
               <span className="text-sm font-semibold text-foreground">
@@ -261,7 +261,7 @@ function MyApp() {
                   value={serverUrl}
                   onChange={(e) => setServerUrl(e.target.value)}
                   placeholder="https://your-mcp-server-url.com"
-                  className="w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-150 text-sm"
+                  className="cursor-target w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-150 text-sm"
                   required
                 />
               </div>
@@ -283,7 +283,7 @@ function MyApp() {
                   value={serverName}
                   onChange={(e) => setServerName(e.target.value)}
                   placeholder="Custom server name"
-                  className="w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-150 text-sm"
+                  className="cursor-target w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-150 text-sm"
                 />
               </div>
 
@@ -296,7 +296,7 @@ function MyApp() {
                   <DropdownMenuTrigger asChild>
                     <button
                       type="button"
-                      className="w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-card text-foreground text-sm flex items-center justify-between hover:bg-muted-backdrop cursor-pointer transition-all duration-150"
+                      className="cursor-target w-full px-3 py-2.5 border border-muted rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent bg-card text-foreground text-sm flex items-center justify-between hover:bg-muted-backdrop cursor-pointer transition-all duration-150"
                     >
                       <span>{getTransportDisplayText(transportType)}</span>
                       <ChevronDown className="w-4 h-4 text-foreground" />
@@ -307,13 +307,13 @@ function MyApp() {
                     align="start"
                   >
                     <DropdownMenuItem
-                      className="px-3 py-2 text-sm text-foreground hover:bg-muted-backdrop cursor-pointer focus:bg-muted-backdrop focus:outline-none"
+                      className="cursor-target px-3 py-2 text-sm text-foreground hover:bg-muted-backdrop cursor-pointer focus:bg-muted-backdrop focus:outline-none"
                       onClick={() => setTransportType(MCPTransport.HTTP)}
                     >
                       HTTP (default)
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="px-3 py-2 text-sm text-foreground hover:bg-muted-backdrop cursor-pointer focus:bg-muted-backdrop focus:outline-none"
+                      className="cursor-target px-3 py-2 text-sm text-foreground hover:bg-muted-backdrop cursor-pointer focus:bg-muted-backdrop focus:outline-none"
                       onClick={() => setTransportType(MCPTransport.SSE)}
                     >
                       SSE
@@ -325,7 +325,7 @@ function MyApp() {
 
             <button
               type="submit"
-              className="mt-6 w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer transition-all duration-150 font-medium"
+              className="cursor-target mt-6 w-full px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 cursor-pointer transition-all duration-150 font-medium"
             >
               Add Server
             </button>
@@ -377,7 +377,7 @@ function MyApp() {
                       </div>
                       <button
                         onClick={() => removeServer(index)}
-                        className="ml-4 px-3 py-1.5 text-sm bg-destructive/20 text-destructive rounded-md hover:bg-destructive/30 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-1 transition-colors duration-150 flex-shrink-0"
+                        className="cursor-target ml-4 px-3 py-1.5 text-sm bg-destructive/20 text-destructive rounded-md hover:bg-destructive/30 focus:outline-none focus:ring-2 focus:ring-destructive focus:ring-offset-1 transition-colors duration-150 flex-shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

@@ -182,6 +182,7 @@ export const McpPromptButton = React.forwardRef<
               className={cn(
                 buttonClasses,
                 promptError && "border-destructive text-destructive",
+                "cursor-target",
               )}
               aria-label="Insert MCP Prompt"
               data-slot="mcp-prompt-button"
@@ -257,7 +258,7 @@ function PromptListContent({
       {promptList.map((promptEntry) => (
         <DropdownMenu.Item
           key={`${promptEntry.server.url}-${promptEntry.prompt.name}`}
-          className="relative flex cursor-pointer select-none items-start flex-col rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+          className="cursor-target relative flex cursor-pointer select-none items-start flex-col rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
           onSelect={() => {
             onSelectPrompt(promptEntry.prompt.name);
           }}
@@ -321,7 +322,7 @@ const ResourceCombobox: React.FC<ResourceComboboxProps> = ({
               placeholder="Search resources..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="cursor-target w-full pl-8 pr-3 py-1.5 text-sm bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               onClick={(e) => e.stopPropagation()}
               onKeyDown={(e) => {
                 // Prevent dropdown from closing on key events
@@ -383,7 +384,7 @@ function ResourceListContent({
       {filteredResources.map((resourceEntry) => (
         <DropdownMenu.Item
           key={resourceEntry.resource.uri}
-          className="relative flex cursor-pointer select-none items-start flex-col rounded-sm px-2 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-accent focus:text-accent-foreground"
+          className="cursor-target relative flex cursor-pointer select-none items-start flex-col rounded-sm px-2 py-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50 focus:bg-accent focus:text-accent-foreground"
           onSelect={() => {
             onSelectResource(
               resourceEntry.resource.uri,
@@ -493,7 +494,7 @@ export const McpResourceButton = React.forwardRef<
             <button
               ref={ref}
               type="button"
-              className={buttonClasses}
+              className={cn(buttonClasses, "cursor-target")}
               aria-label="Insert MCP Resource"
               data-slot="mcp-resource-button"
               {...props}

@@ -237,7 +237,7 @@ function SuggestionPopover<T extends SuggestionItem>({
                 key={item.id}
                 type="button"
                 className={cn(
-                  "flex items-start gap-2 px-2 py-2 text-sm rounded-md text-left",
+                  "cursor-target flex items-start gap-2 px-2 py-2 text-sm rounded-md text-left",
                   "hover:bg-accent hover:text-accent-foreground transition-colors",
                   index === state.selectedIndex &&
                     "bg-accent text-accent-foreground",
