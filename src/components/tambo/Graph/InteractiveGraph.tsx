@@ -1,7 +1,7 @@
 "use client";
 
 import { withInteractable, useTamboComponentState } from "@tambo-ai/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import Graph from "./Graph";
 import { graphSchema } from "./Graph.types";
@@ -25,6 +25,19 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
   );
   const [timeRange, setTimeRange] = useState<"all" | "week" | "month" | "quarter">("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
+
+  // Ensure all datasets are selected when data loads or changes
+  useEffect(() => {
+    if (props.data?.datasets) {
+      const allLabels = new Set(props.data.datasets.map(d => d.label));
+      setSelectedDatasets(prev => {
+        // Only update if the datasets have changed
+        const prevLabels = Array.from(prev).sort().join(',');
+        const newLabels = Array.from(allLabels).sort().join(',');
+        return prevLabels !== newLabels ? allLabels : prev;
+      });
+    }
+  }, [props.data?.datasets]);
 
   // Determine which features are actually usable based on data
   const canFilter = enableFiltering && props.data?.datasets && props.data.datasets.length > 1;
@@ -76,7 +89,13 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
   }));
 
   // Early returns after all hooks
-  if (!props.data) {
+  // Validate that data exists and has meaningful content
+  // Don't render anything if data is invalid or empty
+  if (!props.data || 
+      !props.data.labels || 
+      props.data.labels.length === 0 || 
+      !props.data.datasets || 
+      props.data.datasets.length === 0) {
     return null;
   }
   

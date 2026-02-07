@@ -13,12 +13,16 @@ const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
     { className, variant, size, data, title, showLegend = true, ...props },
     ref,
   ) => {
+    // Pie charts need more height to accommodate the legend
+    const isPieChart = data?.type === "pie";
+    const effectiveSize = isPieChart && size === "default" ? "lg" : size;
+    
     // If no data received yet, show loading
     if (!data) {
       return (
         <div
           ref={ref}
-          className={cn(graphVariants({ variant, size }), className)}
+          className={cn(graphVariants({ variant, size: effectiveSize }), className)}
           role="status"
           {...props}
         >
@@ -50,7 +54,7 @@ const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
       return (
         <div
           ref={ref}
-          className={cn(graphVariants({ variant, size }), className)}
+          className={cn(graphVariants({ variant, size: effectiveSize }), className)}
           role="status"
           {...props}
         >
@@ -76,7 +80,7 @@ const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
       return (
         <div
           ref={ref}
-          className={cn(graphVariants({ variant, size }), className)}
+          className={cn(graphVariants({ variant, size: effectiveSize }), className)}
           role="status"
           {...props}
         >
@@ -129,10 +133,10 @@ const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
     };
 
     return (
-      <GraphErrorBoundary className={className} variant={variant} size={size}>
+      <GraphErrorBoundary className={className} variant={variant} size={effectiveSize}>
         <figure
           ref={ref}
-          className={cn(graphVariants({ variant, size }), className)}
+          className={cn(graphVariants({ variant, size: effectiveSize }), className)}
           {...props}
         >
           <div className="p-4 h-full relative">
