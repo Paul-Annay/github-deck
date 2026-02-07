@@ -130,7 +130,7 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
           {options?.map((card, index) => (
             <div
               key={`${card.id || "card"}-${index}`}
-              className="border-b border-border pb-2 last:border-0"
+              className="border-b cursor-target border-border pb-2 last:border-0"
             >
               <div
                 className={cn(
