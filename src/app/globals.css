@@ -147,23 +147,34 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground h-screen w-screen overflow-hidden;
+    @apply text-foreground h-screen w-screen overflow-hidden;
     font-family: var(--font-geist-mono), monospace; /* Default to Mono */
-    background-size: 100% 100%, 40px 40px, 40px 40px;
   }
 }
 
 /* Animations */
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 @keyframes flicker {
-  0% { opacity: 0.95; }
-  5% { opacity: 0.85; }
-  10% { opacity: 0.95; }
-  100% { opacity: 0.98; }
+  0% {
+    opacity: 0.95;
+  }
+  5% {
+    opacity: 0.85;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0.98;
+  }
 }
 
 .scanline::after {
@@ -174,18 +185,30 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: 
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
   z-index: 9999; /* Ensure it's on top of everything */
-  background-size: 100% 3px, 3px 100%;
+  background-size:
+    100% 3px,
+    3px 100%;
   pointer-events: none;
   animation: flicker 4s infinite;
 }
 
 @keyframes flash {
-  0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(0, 240, 255, 0.2); }
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(0, 240, 255, 0.2);
+  }
 }
 
 .animate-flash {
