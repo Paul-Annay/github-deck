@@ -17,7 +17,46 @@ import {
   getRepoCommits,
   getRepoContributors,
   getRepoDetails,
-} from "@/lib/github/client";
+} from "@/services/github/client";
+
+/** Zod schemas for GitHub API tool outputs */
+const gitHubRepoSchema = z.object({
+  name: z.string(),
+  full_name: z.string(),
+  description: z.string().nullable(),
+  stargazers_count: z.number(),
+  forks_count: z.number(),
+  open_issues_count: z.number(),
+  language: z.string().nullable(),
+  html_url: z.string(),
+  owner: z.object({
+    login: z.string(),
+    avatar_url: z.string(),
+  }),
+});
+
+const gitHubCommitSchema = z.object({
+  sha: z.string(),
+  commit: z.object({
+    message: z.string(),
+    author: z.object({
+      name: z.string(),
+      date: z.string(),
+    }),
+  }),
+  author: z
+    .object({
+      login: z.string(),
+      avatar_url: z.string(),
+    })
+    .nullable(),
+});
+
+const gitHubContributorSchema = z.object({
+  login: z.string(),
+  contributions: z.number(),
+  avatar_url: z.string(),
+});
 
 /**
  * tools
@@ -41,7 +80,10 @@ export const tools: TamboTool[] = [
       owner: z.string().describe("The owner of the repository (e.g. 'facebook')"),
       repo: z.string().describe("The name of the repository (e.g. 'react')"),
     }),
-    outputSchema: z.any(),
+    outputSchema: z.object({
+      details: gitHubRepoSchema,
+      recent_commits: z.array(gitHubCommitSchema),
+    }),
   },
   {
     name: "getCommitActivity",
@@ -54,7 +96,7 @@ export const tools: TamboTool[] = [
       owner: z.string(),
       repo: z.string(),
     }),
-    outputSchema: z.any(),
+    outputSchema: z.array(gitHubCommitSchema),
   },
   {
     name: "getContributors",
@@ -66,7 +108,7 @@ export const tools: TamboTool[] = [
       owner: z.string(),
       repo: z.string(),
     }),
-    outputSchema: z.any(),
+    outputSchema: z.array(gitHubContributorSchema),
   },
 ];
 

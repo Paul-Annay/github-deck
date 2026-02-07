@@ -1,24 +1,98 @@
-# Tambo Template
+# GitHub Command Deck
 
-This is a starter NextJS app with Tambo hooked up to get your AI app development started quickly.
+An AI-powered GitHub repository explorer built with Next.js and Tambo. Chat with an AI assistant to analyze repos, visualize commit activity, and explore contributors—all with a command-center aesthetic.
 
 ## Get Started
 
-1. Run `npm create-tambo@latest my-tambo-app` for a new project
+1. `npm install`
 
-2. `npm install`
+2. Copy `.env.example` to `.env.local` and add your API keys:
+   - **NEXT_PUBLIC_TAMBO_API_KEY** (required) – Get your free key at [tambo.co/dashboard](https://tambo.co/dashboard)
+   - **GITHUB_TOKEN** (optional) – For higher GitHub API rate limits
+   - **NEXT_PUBLIC_TAMBO_URL** (optional) – Custom Tambo server URL
 
-3. `npx tambo init`
+   Or run `npx tambo init` to set up Tambo.
 
-- or rename `example.env.local` to `.env.local` and add your tambo API key you can get for free [here](https://tambo.co/dashboard).
+3. Run `npm run dev` and go to `localhost:3000` to use the app!
 
-4. Run `npm run dev` and go to `localhost:3000` to use the app!
+## Tambo CLI
+
+The Tambo CLI lets you add, update, and manage Tambo components in your project. Use `npx tambo` to run commands (no global install needed).
+
+### Adding Components
+
+Add pre-built Tambo components that are wired up for AI control:
+
+```bash
+# Add a single component
+npx tambo add form
+
+# Add multiple components at once
+npx tambo add form graph canvas-space
+
+# Add to a custom directory
+npx tambo add form --prefix=src/components/ui
+
+# Skip confirmation prompts (useful for CI/CD)
+npx tambo add form --yes
+
+# Use legacy peer deps (if you hit dependency conflicts)
+npx tambo add form --legacy-peer-deps
+```
+
+Components are installed into `src/components/tambo/` (or your `--prefix` path). The CLI automatically:
+
+- Installs the component files and any dependencies
+- Updates your `src/lib/tambo.ts` registry
+- Configures CSS and Tailwind for the new components
+
+### Available Components
+
+| Component | Description |
+|-----------|-------------|
+| `graph` | Interactive charts (line, bar, pie, scatter) |
+| `form` | AI-powered form components |
+| `input-fields` | Smart input field components |
+| `canvas-space` | Canvas workspace for visual AI interactions |
+| `control-bar` | Spotlight-style command palette |
+| `message-thread-full` | Full-screen chat with history and typing indicators |
+| `message-thread-panel` | Split-view chat with integrated workspace |
+| `message-thread-collapsible` | Collapsible chat for sidebars |
+
+### Other CLI Commands
+
+```bash
+# List installed components and their locations
+npx tambo list
+
+# Update a component to the latest version
+npx tambo update graph
+
+# Full project setup (API key + recommended components)
+npx tambo full-send
+
+# Migrate from legacy components/ui/ location
+npx tambo migrate
+
+# Upgrade entire project (packages + components)
+npx tambo upgrade
+```
+
+See the [Tambo CLI reference](https://docs.tambo.co/reference/cli) for full documentation.
+
+## Available Tools
+
+The AI can use these tools to fetch GitHub data:
+
+- **getRepoOverview** – Repository details and recent commits (use when the user asks to "analyze" or summarize a repo)
+- **getCommitActivity** – Recent commits for visualizing activity trends
+- **getContributors** – Top contributors for a repository
 
 ## Customizing
 
-### Change what components tambo can control
+### Registering Components for AI Control
 
-You can see how components are registered with tambo in `src/lib/tambo.ts`:
+Components you add with `npx tambo add` are typically auto-registered. You can also register custom components manually in `src/lib/tambo.ts`:
 
 ```tsx
 export const components: TamboComponent[] = [
@@ -29,90 +103,62 @@ export const components: TamboComponent[] = [
     component: Graph,
     propsSchema: graphSchema,
   },
+  {
+    name: "DataCard",
+    description: "Displays options as clickable cards with links...",
+    component: DataCard,
+    propsSchema: dataCardSchema,
+  },
   // Add more components here
 ];
 ```
 
-You can install the graph component into any project with:
+### Adding Tools
 
-```bash
-npx tambo add graph
-```
-
-The example Graph component demonstrates several key features:
-
-- Different prop types (strings, arrays, enums, nested objects)
-- Multiple chart types (bar, line, pie)
-- Customizable styling (variants, sizes)
-- Optional configurations (title, legend, colors)
-- Data visualization capabilities
-
-Update the `components` array with any component(s) you want tambo to be able to use in a response!
-
-You can find more information about the options [here](https://docs.tambo.co/concepts/generative-interfaces/generative-components)
-
-### Add tools for tambo to use
-
-Tools are defined with `inputSchema` and `outputSchema`:
+Tools are defined with `inputSchema` and `outputSchema` in `src/lib/tambo.ts`:
 
 ```tsx
 export const tools: TamboTool[] = [
   {
-    name: "globalPopulation",
-    description:
-      "A tool to get global population trends with optional year range filtering",
-    tool: getGlobalPopulationTrend,
+    name: "getRepoOverview",
+    description: "Fetches repository details and recent commit activity...",
+    tool: async ({ owner, repo }) => { ... },
     inputSchema: z.object({
-      startYear: z.number().optional(),
-      endYear: z.number().optional(),
+      owner: z.string(),
+      repo: z.string(),
     }),
-    outputSchema: z.array(
-      z.object({
-        year: z.number(),
-        population: z.number(),
-        growthRate: z.number(),
-      }),
-    ),
+    outputSchema: z.object({ ... }),
   },
 ];
 ```
 
-Find more information about tools [here.](https://docs.tambo.co/concepts/tools)
+Find more information about tools [here](https://docs.tambo.co/concepts/tools).
 
-### The Magic of Tambo Requires the TamboProvider
+### TamboProvider
 
-Make sure in the TamboProvider wrapped around your app:
+`TamboProvider` wraps the app in `src/app/page.tsx` with your API key, components, and tools:
 
 ```tsx
-...
 <TamboProvider
   apiKey={process.env.NEXT_PUBLIC_TAMBO_API_KEY!}
-  components={components} // Array of components to control
-  tools={tools} // Array of tools it can use
+  components={components}
+  tools={tools}
 >
   {children}
 </TamboProvider>
 ```
 
-In this example we do this in the `Layout.tsx` file, but you can do it anywhere in your app that is a client component.
-
-### Voice input
+### Voice Input
 
 The template includes a `DictationButton` component using the `useTamboVoice` hook for speech-to-text input.
 
 ### MCP (Model Context Protocol)
 
-The template includes MCP support for connecting to external tools and resources. You can use the MCP hooks from `@tambo-ai/react/mcp`:
+The template includes MCP support for connecting to external tools and resources. See `src/components/tambo/mcp-components.tsx` for example usage.
 
-- `useTamboMcpPromptList` - List available prompts from MCP servers
-- `useTamboMcpPrompt` - Get a specific prompt
-- `useTamboMcpResourceList` - List available resources
+### Rendering Components Elsewhere
 
-See `src/components/tambo/mcp-components.tsx` for example usage.
-
-### Change where component responses are shown
-
-The components used by tambo are shown alongside the message response from tambo within the chat thread, but you can have the result components show wherever you like by accessing the latest thread message's `renderedComponent` field:
+Components used by Tambo are shown in the chat thread. You can render them in a custom location by accessing the latest thread message's `renderedComponent` field:
 
 ```tsx
 const { thread } = useTambo();
