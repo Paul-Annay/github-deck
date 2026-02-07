@@ -1,7 +1,7 @@
 "use client";
 
 import { useTambo } from "@tambo-ai/react";
-import { useMemo } from "react";
+import { useMemo, useRef, useEffect } from "react";
 
 /**
  * MainViewscreen - The right panel that displays AI-generated components
@@ -11,6 +11,8 @@ import { useMemo } from "react";
  */
 export function MainViewscreen() {
   const { thread } = useTambo();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const previousCountRef = useRef(0);
 
   // Get all rendered components from the conversation
   const renderedComponents = useMemo(() => {
@@ -25,6 +27,25 @@ export function MainViewscreen() {
       }));
   }, [thread.messages]);
 
+  // Auto-scroll when new components are added
+  useEffect(() => {
+    const currentCount = renderedComponents.length;
+    
+    // Only scroll if a new component was added (not on initial load)
+    if (currentCount > previousCountRef.current && previousCountRef.current > 0) {
+      const scrollContainer = scrollContainerRef.current;
+      if (scrollContainer) {
+        // Smooth scroll to bottom
+        scrollContainer.scrollTo({
+          top: scrollContainer.scrollHeight,
+          behavior: 'smooth'
+        });
+      }
+    }
+    
+    previousCountRef.current = currentCount;
+  }, [renderedComponents.length]);
+
   // Check if AI is currently generating (check if last message is from assistant and incomplete)
   const isGenerating = thread?.messages?.length > 0 && 
     thread.messages[thread.messages.length - 1]?.role === 'assistant' &&
@@ -33,7 +54,7 @@ export function MainViewscreen() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Main Display Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto custom-scrollbar">
         {renderedComponents.length > 0 ? (
           <div className="p-4 space-y-6">
             {renderedComponents.map((item, index) => (

@@ -119,7 +119,15 @@ const PRCard: React.FC<{ pr: PRItem }> = ({ pr }) => {
 
   // Handle missing user data
   const userLogin = pr.user?.login ?? "unknown";
-  const userAvatar = pr.user?.avatar_url ?? `https://github.com/identicons/${userLogin}.png`;
+  let userAvatar = pr.user?.avatar_url ?? `https://ui-avatars.com/api/?name=${encodeURIComponent(userLogin)}&background=1e1e24&color=00f0ff&size=32`;
+  
+  // Validate avatar URL - ensure it's a complete URL
+  try {
+    new URL(userAvatar);
+  } catch {
+    // If invalid URL, use fallback
+    userAvatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(userLogin)}&background=1e1e24&color=00f0ff&size=32`;
+  }
 
   return (
     <a

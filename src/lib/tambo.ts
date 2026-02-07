@@ -201,29 +201,76 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getPullRequests",
-    description: "Fetches pull requests for a repository. Use this to show PR activity, merged PRs, or open PRs. CRITICAL: After calling this tool, you MUST immediately render an InteractivePRViewer component with the pull requests data. DO NOT just list PRs in text - render the actual InteractivePRViewer component.",
-    tool: async ({ owner, repo, state = "all" }: { owner: string; repo: string; state?: "open" | "closed" | "all" }) => {
-      return getRepoPullRequests(owner, repo, state);
+    description: "Fetches pull requests for a repository (10 per page). Use this to show PR activity, merged PRs, or open PRs. CRITICAL: After calling this tool, you MUST immediately render an InteractivePRViewer component with the pull requests data. DO NOT just list PRs in text - render the actual InteractivePRViewer component.",
+    tool: async ({ owner, repo, state = "all", page = 1 }: { owner: string; repo: string; state?: "open" | "closed" | "all"; page?: number }) => {
+      return getRepoPullRequests(owner, repo, state, page);
     },
     inputSchema: z.object({
       owner: z.string().describe("The owner of the repository"),
       repo: z.string().describe("The name of the repository"),
       state: z.enum(["open", "closed", "all"]).optional().describe("Filter by PR state (default: all)"),
+      page: z.number().optional().describe("Page number for pagination (default: 1, 10 PRs per page)"),
     }),
     outputSchema: z.array(gitHubPullRequestSchema),
   },
   {
     name: "getIssues",
-    description: "Fetches issues for a repository. Use this to show issue tracking, bug reports, or feature requests.",
-    tool: async ({ owner, repo, state = "all" }: { owner: string; repo: string; state?: "open" | "closed" | "all" }) => {
-      return getRepoIssues(owner, repo, state);
+    description: "Fetches issues for a repository (10 per page). Returns minimal essential data to reduce context usage. Use this to show issue tracking, bug reports, or feature requests. For issue comments, use getIssueComments tool separately. For more issues, increment the page parameter.",
+    tool: async ({ owner, repo, state = "all", page = 1 }: { owner: string; repo: string; state?: "open" | "closed" | "all"; page?: number }) => {
+      const issues = await getRepoIssues(owner, repo, state, page);
+      // Return only essential fields to minimize context usage
+      return issues.map(issue => ({
+        number: issue.number,
+        title: issue.title,
+        state: issue.state,
+        created_at: issue.created_at,
+        html_url: issue.html_url,
+        labels: issue.labels,
+        comments: issue.comments,
+      }));
     },
     inputSchema: z.object({
       owner: z.string().describe("The owner of the repository"),
       repo: z.string().describe("The name of the repository"),
       state: z.enum(["open", "closed", "all"]).optional().describe("Filter by issue state (default: all)"),
+      page: z.number().optional().describe("Page number for pagination (default: 1, 10 issues per page)"),
     }),
-    outputSchema: z.array(gitHubIssueSchema),
+    outputSchema: z.array(z.object({
+      number: z.number(),
+      title: z.string(),
+      state: z.enum(["open", "closed"]),
+      created_at: z.string(),
+      html_url: z.string(),
+      labels: z.array(z.object({
+        name: z.string(),
+        color: z.string(),
+      })),
+      comments: z.number(),
+    })),
+  },
+  {
+    name: "getIssueComments",
+    description: "Fetches comments for a specific issue. Use this when user wants to see discussion on an issue. Call this on-demand when user expands an issue to view comments.",
+    tool: async ({ owner, repo, issueNumber }: { owner: string; repo: string; issueNumber: number }) => {
+      const { getIssueComments } = await import("@/services/github/client");
+      return getIssueComments(owner, repo, issueNumber);
+    },
+    inputSchema: z.object({
+      owner: z.string().describe("The owner of the repository"),
+      repo: z.string().describe("The name of the repository"),
+      issueNumber: z.number().describe("The issue number"),
+    }),
+    outputSchema: z.array(z.object({
+      id: z.number(),
+      user: z.object({
+        login: z.string(),
+        avatar_url: z.string(),
+      }).nullable(),
+      created_at: z.string(),
+      updated_at: z.string(),
+      body: z.string(),
+      html_url: z.string(),
+    })),
   },
   {
     name: "getReleases",
@@ -747,7 +794,7 @@ export const components: TamboComponent[] = [
   {
     name: "InteractivePRViewer",
     description:
-      "INTERACTABLE: Enhanced PR viewer with filtering, sorting, search, and selection capabilities. Users can filter by state, sort by various criteria, search PRs, and select multiple PRs. AI can see user selections and provide analysis.",
+      "INTERACTABLE: Enhanced PR viewer with filtering, sorting, search, and pagination. IMPORTANT: When rendering this component, you MUST pass owner, repo, and initialState props along with the prs data. Example: {prs: result, owner: 'facebook', repo: 'react', initialState: 'all'}. Users can filter by state (only if initialState was 'all'), sort by various criteria, search PRs, and load more PRs with a 'Show More' button. The component fetches 10 PRs at a time and respects the initial state filter when loading more.",
     component: InteractivePRViewer,
     propsSchema: interactivePRViewerSchema,
   },

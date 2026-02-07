@@ -1421,9 +1421,7 @@ const ImageContextBadge: React.FC<ImageContextBadgeProps> = ({
             <img
               src={image.dataUrl}
               alt={displayName}
-              loading="lazy"
-              decoding="async"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
             <div className="absolute bottom-1 left-2 right-2 text-white text-xs font-medium truncate">

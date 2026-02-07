@@ -19,12 +19,15 @@ type InteractiveGraphProps = z.infer<typeof interactiveGraphSchema>;
 function InteractiveGraphBase(props: InteractiveGraphProps) {
   const { enableFiltering, enableTimeRange, enableDataPointClick, ...graphProps } = props;
   
-  if (!props.data) {
-    return null;
-  }
+  // Initialize all hooks before any conditional returns
+  const [selectedDatasets, setSelectedDatasets] = useState<Set<string>>(
+    new Set(props.data?.datasets?.map(d => d.label) || [])
+  );
+  const [timeRange, setTimeRange] = useState<"all" | "week" | "month" | "quarter">("all");
+  const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
   // Determine which features are actually usable based on data
-  const canFilter = enableFiltering && props.data.datasets && props.data.datasets.length > 1;
+  const canFilter = enableFiltering && props.data?.datasets && props.data.datasets.length > 1;
   
   // Time range filtering requires:
   // 1. enableTimeRange prop is true (default: true)
@@ -32,20 +35,34 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
   // 3. At least one label can be parsed as a valid date
   //    Examples of valid date labels: "2024-01-01", "2024-02-15T10:30:00Z"
   //    Examples of invalid labels: "Week 1", "January", "Q1"
-  const hasDateLabels = props.data.labels && props.data.labels.length > 0 && 
+  // 4. Data spans at least 8 days (otherwise time range filters don't make sense)
+  const hasDateLabels = props.data?.labels && props.data.labels.length > 0 && 
     props.data.labels.some(label => !isNaN(new Date(label).getTime()));
-  const canTimeRange = enableTimeRange && props.data.type !== "pie" && hasDateLabels;
   
-  // If no interactive features are usable, just render the regular Graph
-  if (!canFilter && !canTimeRange && !enableDataPointClick) {
-    return <Graph {...graphProps} />;
+  // Calculate the actual date range of the data
+  let dataSpanDays = 0;
+  if (hasDateLabels && props.data?.labels) {
+    const dates = props.data.labels
+      .map(label => new Date(label))
+      .filter(date => !isNaN(date.getTime()))
+      .sort((a, b) => a.getTime() - b.getTime());
+    
+    if (dates.length >= 2) {
+      const firstDate = dates[0];
+      const lastDate = dates[dates.length - 1];
+      dataSpanDays = Math.ceil((lastDate.getTime() - firstDate.getTime()) / (24 * 60 * 60 * 1000));
+    }
   }
   
-  const [selectedDatasets, setSelectedDatasets] = useState<Set<string>>(
-    new Set(props.data?.datasets?.map(d => d.label) || [])
-  );
-  const [timeRange, setTimeRange] = useState<"all" | "week" | "month" | "quarter">("all");
-  const [selectedPoint, setSelectedPoint] = useState<any>(null);
+  const canTimeRange = enableTimeRange && props.data?.type !== "pie" && hasDateLabels && dataSpanDays >= 8;
+
+  // Determine which time range options to show based on data span
+  const availableTimeRanges: Array<"all" | "week" | "month" | "quarter"> = ["all"];
+  if (canTimeRange && dataSpanDays > 0) {
+    if (dataSpanDays >= 8) availableTimeRanges.push("week");
+    if (dataSpanDays >= 31) availableTimeRanges.push("month");
+    if (dataSpanDays >= 91) availableTimeRanges.push("quarter");
+  }
 
   // Expose state to Tambo so AI can see what user selected
   useTamboComponentState(JSON.stringify({
@@ -54,7 +71,19 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
     selectedPoint,
     canFilter,
     canTimeRange,
+    dataSpanDays,
+    availableTimeRanges,
   }));
+
+  // Early returns after all hooks
+  if (!props.data) {
+    return null;
+  }
+  
+  // If no interactive features are usable, just render the regular Graph
+  if (!canFilter && !canTimeRange && !enableDataPointClick) {
+    return <Graph {...graphProps} />;
+  }
 
   // Filter datasets based on user selection
   const filteredData = canFilter
@@ -178,7 +207,7 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
             <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider self-center">
               Range:
             </span>
-            {(["all", "week", "month", "quarter"] as const).map(range => (
+            {availableTimeRanges.map(range => (
               <button
                 key={range}
                 onClick={() => setTimeRange(range)}

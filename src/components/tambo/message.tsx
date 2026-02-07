@@ -280,10 +280,6 @@ const MessageImages = React.forwardRef<HTMLDivElement, MessageImagesProps>(
             <img
               src={imageUrl}
               alt={`Image ${index + 1}`}
-              width={128}
-              height={128}
-              loading="lazy"
-              decoding="async"
               className="w-full h-full object-cover"
             />
           </div>
@@ -803,8 +799,6 @@ function renderImageContent(url: string, index: number): React.ReactNode {
       <img
         src={url}
         alt={`Tool result image ${index + 1}`}
-        loading="lazy"
-        decoding="async"
         className="max-w-full h-auto object-contain"
       />
     </div>
@@ -839,8 +833,6 @@ function renderResourceContent(
         <img
           src={dataUrl}
           alt={resource.name ?? `Resource image ${index + 1}`}
-          loading="lazy"
-          decoding="async"
           className="max-w-full h-auto object-contain"
         />
       </div>

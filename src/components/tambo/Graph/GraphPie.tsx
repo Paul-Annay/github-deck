@@ -43,6 +43,7 @@ const GraphPie = ({
         stroke="rgba(0,0,0,0.5)"
         strokeWidth={2}
         label
+        isAnimationActive={false}
       />
       <RechartsCore.Tooltip
         contentStyle={{

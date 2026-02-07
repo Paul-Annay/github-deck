@@ -5,6 +5,27 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // Configure external image domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '**.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.github.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ui-avatars.com',
+      },
+    ],
+  },
   // Stub optional peer deps from @standard-community/standard-json
   webpack: (config) => {
     config.resolve.alias = {

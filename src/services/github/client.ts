@@ -137,19 +137,41 @@ export async function getRepoContributors(owner: string, repo: string): Promise<
 export async function getRepoPullRequests(
   owner: string,
   repo: string,
-  state: "open" | "closed" | "all" = "all"
+  state: "open" | "closed" | "all" = "all",
+  page: number = 1
 ): Promise<GitHubPullRequest[]> {
-  // Limit to 20 PRs to prevent large payloads
-  return fetchGitHub<GitHubPullRequest[]>(`/repos/${owner}/${repo}/pulls?state=${state}&per_page=20`);
+  // Limit to 10 PRs per page
+  return fetchGitHub<GitHubPullRequest[]>(`/repos/${owner}/${repo}/pulls?state=${state}&per_page=10&page=${page}`);
 }
 
 export async function getRepoIssues(
   owner: string,
   repo: string,
-  state: "open" | "closed" | "all" = "all"
+  state: "open" | "closed" | "all" = "all",
+  page: number = 1
 ): Promise<GitHubIssue[]> {
-  // Limit to 20 issues to prevent large payloads
-  return fetchGitHub<GitHubIssue[]>(`/repos/${owner}/${repo}/issues?state=${state}&per_page=20`);
+  // Fetch 10 issues per page to reduce context usage
+  return fetchGitHub<GitHubIssue[]>(`/repos/${owner}/${repo}/issues?state=${state}&per_page=10&page=${page}`);
+}
+
+export interface GitHubIssueComment {
+  id: number;
+  user: {
+    login: string;
+    avatar_url: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+  body: string;
+  html_url: string;
+}
+
+export async function getIssueComments(
+  owner: string,
+  repo: string,
+  issueNumber: number
+): Promise<GitHubIssueComment[]> {
+  return fetchGitHub<GitHubIssueComment[]>(`/repos/${owner}/${repo}/issues/${issueNumber}/comments`);
 }
 
 export async function getRepoReleases(owner: string, repo: string): Promise<GitHubRelease[]> {

@@ -64,6 +64,7 @@ const GraphBar = ({ chartData, validDatasets, showLegend }: GraphBarProps) => {
           dataKey={dataset.label}
           fill={dataset.color ?? defaultColors[index % defaultColors.length]}
           radius={[0, 0, 0, 0]}
+          isAnimationActive={false}
         />
       ))}
     </RechartsCore.BarChart>
