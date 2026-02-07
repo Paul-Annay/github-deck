@@ -706,9 +706,9 @@ export const TextEditor = React.forwardRef<TamboEditor, TextEditorProps>(
           class: cn(
             "tiptap",
             "prose prose-sm max-w-none focus:outline-none",
-            "p-3 rounded-t-lg bg-transparent text-sm leading-relaxed",
+            "p-3 rounded-t-lg text-sm leading-relaxed",
             "min-h-[82px] max-h-[40vh] overflow-y-auto",
-            "break-words whitespace-pre-wrap",
+            "break-words whitespace-pre-wrap bg-transparent",
             className,
           ),
         },
