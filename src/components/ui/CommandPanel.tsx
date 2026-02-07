@@ -37,7 +37,7 @@ const CommandPanel = ({
   return (
     <section
       className={cn(
-        "relative flex flex-col border-2 bg-card/60 backdrop-blur-md overflow-hidden transition-all duration-50",
+        "relative flex flex-col border-2 bg-card/60 backdrop-blur-md overflow-hidden transition-all duration-10",
         statusBorder[status],
         status === "active" && "shadow-[0_0_15px_rgba(0,240,255,0.15)]",
         className
