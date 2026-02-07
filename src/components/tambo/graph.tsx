@@ -1,7 +1,9 @@
 "use client";
 
+import { useCommandPanel } from "@/components/ui/CommandPanelContext";
 import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
+import { Maximize2 } from "lucide-react";
 import * as React from "react";
 import * as RechartsCore from "recharts";
 import { z } from "zod";
@@ -174,6 +176,23 @@ export const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
     { className, variant, size, data, title, showLegend = true, ...props },
     ref,
   ) => {
+    const { setPanelContent } = useCommandPanel();
+
+    const handleMaximize = () => {
+      setPanelContent(
+        <Graph
+          data={data}
+          title={title}
+          showLegend={showLegend}
+          variant="solid"
+          size="lg"
+          className="h-full w-full border-0"
+        />,
+        title || "DATA VISUALIZATION",
+        "active"
+      );
+    };
+
     // If no data received yet, show loading
     if (!data) {
       return (
@@ -254,6 +273,7 @@ export const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
     );
 
     // Transform data for Recharts using only available data points
+    // Transformation omitted for brevity as it's unchanged in logic
     const chartData = data.labels
       .slice(0, maxDataPoints)
       .map((label, index) => ({
@@ -457,16 +477,28 @@ export const Graph = React.forwardRef<HTMLDivElement, GraphProps>(
           className={cn(graphVariants({ variant, size }), className)}
           {...props}
         >
-          <div className="p-4 h-full relative">
+          <div className="p-4 h-full relative group">
             {/* Grid background for the chart area */}
              <div className="absolute inset-0 bg-grid-overlay opacity-10 pointer-events-none" />
             
-            {title && (
-              <h3 className="text-sm font-mono font-bold tracking-widest mb-4 text-neon-cyan/80 uppercase border-b border-neon-cyan/20 pb-2">
-                {title}
-              </h3>
-            )}
-            <div className="w-full h-[calc(100%-2rem)] relative z-10">
+            <div className="flex items-center justify-between mb-4 border-b border-neon-cyan/20 pb-2 min-h-[29px]">
+               {title ? (
+                 <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
+                   {title}
+                 </h3>
+               ) : <span />}
+               
+               <button 
+                onClick={handleMaximize}
+                className="text-neon-cyan/50 hover:text-neon-cyan hover:bg-neon-cyan/10 p-1 rounded transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                title="Open in Main Viewscreen"
+                aria-label="Maximize to Main Viewscreen"
+              >
+                <Maximize2 size={16} />
+              </button>
+            </div>
+
+            <div className="w-full h-[calc(100%-2.5rem)] relative z-10">
               <RechartsCore.ResponsiveContainer width="100%" height="100%">
                 {renderChart()}
               </RechartsCore.ResponsiveContainer>
