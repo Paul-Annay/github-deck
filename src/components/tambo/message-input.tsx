@@ -492,8 +492,6 @@ const MessageInputInternal = React.forwardRef<
       // Clear any previous errors
       setSubmitError(null);
       setImageError(null);
-      setDisplayValue("");
-      storeValueInSessionStorage(thread.id);
       setIsSubmitting(true);
 
       // Extract resource names directly from editor at submit time to ensure we have the latest
@@ -506,25 +504,30 @@ const MessageInputInternal = React.forwardRef<
 
       const imageIdsAtSubmitTime = images.map((image) => image.id);
 
+      // Clear input immediately before submission
+      setValue("");
+      setDisplayValue("");
+      storeValueInSessionStorage(thread.id);
+      
+      // Clear only the images that were staged when submission started
+      if (imageIdsAtSubmitTime.length > 0) {
+        imageIdsAtSubmitTime.forEach((id) => removeImage(id));
+      }
+
       try {
         await submit({
           streamResponse: true,
           resourceNames: latestResourceNames,
         });
-        setValue("");
-        // Clear only the images that were staged when submission started so
-        // any images added while the request was in-flight are preserved.
-        if (imageIdsAtSubmitTime.length > 0) {
-          imageIdsAtSubmitTime.forEach((id) => removeImage(id));
-        }
         // Refocus the editor after a successful submission
         setTimeout(() => {
           editorRef.current?.focus();
         }, 0);
       } catch (error) {
         console.error("Failed to submit message:", error);
+        // On submit failure, restore the value and show error
         setDisplayValue(value);
-        // On submit failure, also clear image error
+        setValue(value);
         setImageError(null);
         setSubmitError(
           error instanceof Error
@@ -1570,7 +1573,6 @@ const MessageInputToolbar = React.forwardRef<
         })}
       </div>
       <div className="flex items-center gap-2">
-        <DictationButton />
         {/* Right side - only submit button */}
         {React.Children.map(children, (child): React.ReactNode => {
           if (
