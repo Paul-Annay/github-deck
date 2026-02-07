@@ -36,16 +36,16 @@
 
 :root {
   /* Default is Dark Mode for Command Deck Theme */
-  --background: 240 10% 4%; /* #0a0a0d */
-  --foreground: 0 0% 88%;   /* #e0e0e0 */
-  
-  --card: 240 6% 10%;       /* #1e1e24 (Panel Gray) */
+  --background: 0 0% 0%; /* #000000 */
+  --foreground: 0 0% 88%; /* #e0e0e0 */
+
+  --card: 240 6% 10%; /* #1e1e24 (Panel Gray) */
   --card-foreground: 0 0% 88%;
 
   --popover: 240 10% 4%;
   --popover-foreground: 0 0% 88%;
 
-  --primary: 184 100% 50%;  /* #00f0ff (Neon Cyan) */
+  --primary: 184 100% 50%; /* #00f0ff (Neon Cyan) */
   --primary-foreground: 240 10% 4%;
 
   --secondary: 41 100% 50%; /* #ffb000 (Amber) */
@@ -60,7 +60,7 @@
   --destructive: 0 84% 60%; /* #ff2a2a (Red) */
   --destructive-foreground: 0 0% 98%;
 
-  --border: 184 100% 50%;   /* Neon Cyan Borders */
+  --border: 184 100% 50%; /* Neon Cyan Borders */
   --input: 240 4% 16%;
   --ring: 184 100% 50%;
 
@@ -74,7 +74,7 @@
   --container: 240 10% 4%;
   --backdrop: 240 10% 4% / 0.8;
   --muted-backdrop: 240 10% 4% / 0.4;
-  
+
   --radius: 0px; /* Sharp edges */
   --panel-left-width: 500px;
   --panel-right-width: 500px;
@@ -83,7 +83,7 @@
 
 .dark {
   /* Inherits root because we forced dark mode values in root, but keeping explicitly just in case */
-  --background: 240 10% 4%;
+  --background: 0 0% 0%;
   --foreground: 0 0% 88%;
   --card: 240 6% 10%;
   --card-foreground: 0 0% 88%;
@@ -109,23 +109,34 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground h-screen w-screen overflow-hidden;
+    @apply text-foreground h-screen w-screen overflow-hidden;
     font-family: var(--font-geist-mono), monospace; /* Default to Mono */
-    background-size: 100% 100%, 40px 40px, 40px 40px;
   }
 }
 
 /* Animations */
 @keyframes scanline {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100vh); }
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
 }
 
 @keyframes flicker {
-  0% { opacity: 0.95; }
-  5% { opacity: 0.85; }
-  10% { opacity: 0.95; }
-  100% { opacity: 0.98; }
+  0% {
+    opacity: 0.95;
+  }
+  5% {
+    opacity: 0.85;
+  }
+  10% {
+    opacity: 0.95;
+  }
+  100% {
+    opacity: 0.98;
+  }
 }
 
 .scanline::after {
@@ -136,18 +147,30 @@
   left: 0;
   bottom: 0;
   right: 0;
-  background: 
-    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
-    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background:
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+    linear-gradient(
+      90deg,
+      rgba(255, 0, 0, 0.06),
+      rgba(0, 255, 0, 0.02),
+      rgba(0, 0, 255, 0.06)
+    );
   z-index: 9999; /* Ensure it's on top of everything */
-  background-size: 100% 3px, 3px 100%;
+  background-size:
+    100% 3px,
+    3px 100%;
   pointer-events: none;
   animation: flicker 4s infinite;
 }
 
 @keyframes flash {
-  0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(0, 240, 255, 0.2); }
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(0, 240, 255, 0.2);
+  }
 }
 
 .animate-flash {
