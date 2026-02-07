@@ -12,8 +12,6 @@ import { DataCard, dataCardSchema } from "@/components/ui/card-data";
 import { 
   InsightCardStack, 
   insightCardStackSchema,
-  ComparisonBuilder,
-  comparisonBuilderSchema,
 } from "@/components/tambo/insights";
 import { InteractiveGraph, interactiveGraphSchema } from "@/components/tambo/Graph/InteractiveGraph";
 import { InteractivePRViewer, interactivePRViewerSchema } from "@/components/tambo/PRViewer/InteractivePRViewer";
@@ -783,13 +781,6 @@ export const components: TamboComponent[] = [
       "INTERACTABLE: Displays AI-generated insights as dismissible cards. AI can add new insights as it discovers patterns. Users can dismiss cards. Use this to surface important findings, warnings, or recommendations about the repository. ALWAYS use this after analyzing a repo with generateInsights tool.",
     component: InsightCardStack,
     propsSchema: insightCardStackSchema,
-  },
-  {
-    name: "ComparisonBuilder",
-    description:
-      "INTERACTABLE: Allows building a list of repositories to compare. Users can add/remove repos, AI can pre-fill based on conversation. When 2+ repos are added, AI should trigger a comparison using InteractiveComparisonTable.",
-    component: ComparisonBuilder,
-    propsSchema: comparisonBuilderSchema,
   },
   {
     name: "InteractivePRViewer",
