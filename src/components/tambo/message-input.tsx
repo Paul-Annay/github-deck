@@ -504,21 +504,22 @@ const MessageInputInternal = React.forwardRef<
 
       const imageIdsAtSubmitTime = images.map((image) => image.id);
 
-      // Clear input immediately before submission
-      setValue("");
-      setDisplayValue("");
-      storeValueInSessionStorage(thread.id);
-      
-      // Clear only the images that were staged when submission started
-      if (imageIdsAtSubmitTime.length > 0) {
-        imageIdsAtSubmitTime.forEach((id) => removeImage(id));
-      }
-
       try {
         await submit({
           streamResponse: true,
           resourceNames: latestResourceNames,
         });
+        
+        // Clear input after successful submission
+        setValue("");
+        setDisplayValue("");
+        storeValueInSessionStorage(thread.id);
+        
+        // Clear only the images that were staged when submission started
+        if (imageIdsAtSubmitTime.length > 0) {
+          imageIdsAtSubmitTime.forEach((id) => removeImage(id));
+        }
+        
         // Refocus the editor after a successful submission
         setTimeout(() => {
           editorRef.current?.focus();

@@ -5,8 +5,6 @@ import {
   MessageInput,
   MessageInputError,
   MessageInputFileButton,
-  MessageInputMcpPromptButton,
-  MessageInputMcpResourceButton,
   MessageInputSubmitButton,
   MessageInputTextarea,
   MessageInputToolbar,
@@ -17,7 +15,6 @@ import {
   MessageSuggestionsStatus,
 } from "@/components/tambo/message-suggestions";
 import { ScrollableMessageContainer } from "@/components/tambo/scrollable-message-container";
-import { MessageInputMcpConfigButton } from "@/components/tambo/message-input";
 import { ThreadContainer, useThreadContainerContext } from "./thread-container";
 import {
   ThreadContent,
@@ -70,21 +67,21 @@ export const MessageThreadFull = React.forwardRef<
   const defaultSuggestions: Suggestion[] = [
     {
       id: "suggestion-1",
-      title: "Get started",
-      detailedSuggestion: "What can you help me with?",
-      messageId: "welcome-query",
+      title: "Analyze React",
+      detailedSuggestion: "Tell me about the Facebook React repo",
+      messageId: "react-analysis",
     },
     {
       id: "suggestion-2",
-      title: "Learn more",
-      detailedSuggestion: "Tell me about your capabilities.",
-      messageId: "capabilities-query",
+      title: "Commit frequency",
+      detailedSuggestion: "Show me the commit frequency graph for Facebook React",
+      messageId: "react-commits",
     },
     {
       id: "suggestion-3",
-      title: "Examples",
-      detailedSuggestion: "Show me some example queries I can try.",
-      messageId: "examples-query",
+      title: "React contributors",
+      detailedSuggestion: "Who are the top contributors to Facebook React?",
+      messageId: "react-contributors",
     },
   ];
 
@@ -116,8 +113,6 @@ export const MessageThreadFull = React.forwardRef<
             <MessageInputTextarea placeholder="Type your message or paste images..." />
             <MessageInputToolbar>
               <MessageInputFileButton />
-              <MessageInputMcpPromptButton />
-              <MessageInputMcpResourceButton />
               <MessageInputSubmitButton />
             </MessageInputToolbar>
             <MessageInputError />
