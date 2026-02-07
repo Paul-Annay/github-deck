@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { useTamboComponentState } from "@tambo-ai/react";
+import { useTamboComponentState, useTamboContextHelpers } from "@tambo-ai/react";
 import * as React from "react";
 import { z } from "zod";
 import { Check } from "lucide-react";
@@ -18,6 +18,7 @@ export type DataCardItem = {
 // Define the component state type
 export type DataCardState = {
   selectedValues: string[];
+  selectedItems: DataCardItem[];
 };
 
 // Define the component props schema with Zod
@@ -57,26 +58,59 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
     // Initialize Tambo component state
     const [state, setState] = useTamboComponentState<DataCardState>(
       `data-card`,
-      { selectedValues: [] },
+      { selectedValues: [], selectedItems: [] },
     );
+
+    const { addContextHelper, removeContextHelper } = useTamboContextHelpers();
+    const uniqueId = React.useId();
+    
+    // Broadcast selected items to context
+    React.useEffect(() => {
+      const contextKey = `data-card-selection-${uniqueId}`;
+      const selectedItems = state?.selectedItems || [];
+      
+      if (selectedItems.length > 0) {
+        addContextHelper(contextKey, () => ({
+          component: "DataCard",
+          title: title || "Untitled Card",
+          selectedItems: selectedItems
+        }));
+      } else {
+        removeContextHelper(contextKey);
+      }
+      
+      return () => {
+        removeContextHelper(contextKey);
+      };
+    }, [state?.selectedItems, title, uniqueId, addContextHelper, removeContextHelper]);
 
     // Handle option selection
     const handleToggleCard = (value: string) => {
       if (!state) return;
 
       const selectedValues = [...state.selectedValues];
+      const selectedItems = [...(state.selectedItems || [])];
+      
       const index = selectedValues.indexOf(value);
+      const item = options?.find((o) => o.value === value);
+
+      if (!item) return;
 
       // Toggle selection
       if (index > -1) {
         // Remove if already selected
         selectedValues.splice(index, 1);
+        const itemIndex = selectedItems.findIndex((i) => i.value === value);
+        if (itemIndex > -1) {
+          selectedItems.splice(itemIndex, 1);
+        }
       } else {
         selectedValues.push(value);
+        selectedItems.push(item);
       }
 
       // Update component state
-      setState({ selectedValues });
+      setState({ selectedValues, selectedItems });
     };
 
     // Handle navigation to URL
