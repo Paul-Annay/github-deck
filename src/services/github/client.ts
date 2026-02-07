@@ -34,6 +34,72 @@ export interface GitHubContributor {
   avatar_url: string;
 }
 
+export interface GitHubPullRequest {
+  number: number;
+  title: string;
+  state: "open" | "closed";
+  user: {
+    login: string;
+    avatar_url: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+  closed_at: string | null;
+  merged_at: string | null;
+  html_url: string;
+  body: string | null;
+  labels: Array<{
+    name: string;
+    color: string;
+  }>;
+  draft: boolean;
+  additions?: number;
+  deletions?: number;
+  changed_files?: number;
+}
+
+export interface GitHubIssue {
+  number: number;
+  title: string;
+  state: "open" | "closed";
+  user: {
+    login: string;
+    avatar_url: string;
+  } | null;
+  created_at: string;
+  updated_at: string;
+  closed_at: string | null;
+  html_url: string;
+  body: string | null;
+  labels: Array<{
+    name: string;
+    color: string;
+  }>;
+  comments: number;
+}
+
+export interface GitHubRelease {
+  tag_name: string;
+  name: string;
+  published_at: string;
+  html_url: string;
+  body: string | null;
+  author: {
+    login: string;
+    avatar_url: string;
+  };
+}
+
+export interface GitHubPRFile {
+  filename: string;
+  status: string;
+  additions: number;
+  deletions: number;
+  changes: number;
+  patch?: string;
+  previous_filename?: string;
+}
+
 const BASE_URL = "https://api.github.com";
 
 async function fetchGitHub<T>(endpoint: string): Promise<T> {
@@ -60,10 +126,48 @@ export async function getRepoDetails(owner: string, repo: string): Promise<GitHu
 }
 
 export async function getRepoCommits(owner: string, repo: string): Promise<GitHubCommit[]> {
-  // Limit to last 100 commits to avoid huge payloads
-  return fetchGitHub<GitHubCommit[]>(`/repos/${owner}/${repo}/commits?per_page=100`);
+  // Limit to 50 commits to avoid huge payloads
+  return fetchGitHub<GitHubCommit[]>(`/repos/${owner}/${repo}/commits?per_page=50`);
 }
 
 export async function getRepoContributors(owner: string, repo: string): Promise<GitHubContributor[]> {
   return fetchGitHub<GitHubContributor[]>(`/repos/${owner}/${repo}/contributors?per_page=10`);
+}
+
+export async function getRepoPullRequests(
+  owner: string,
+  repo: string,
+  state: "open" | "closed" | "all" = "all"
+): Promise<GitHubPullRequest[]> {
+  // Limit to 20 PRs to prevent large payloads
+  return fetchGitHub<GitHubPullRequest[]>(`/repos/${owner}/${repo}/pulls?state=${state}&per_page=20`);
+}
+
+export async function getRepoIssues(
+  owner: string,
+  repo: string,
+  state: "open" | "closed" | "all" = "all"
+): Promise<GitHubIssue[]> {
+  // Limit to 20 issues to prevent large payloads
+  return fetchGitHub<GitHubIssue[]>(`/repos/${owner}/${repo}/issues?state=${state}&per_page=20`);
+}
+
+export async function getRepoReleases(owner: string, repo: string): Promise<GitHubRelease[]> {
+  return fetchGitHub<GitHubRelease[]>(`/repos/${owner}/${repo}/releases?per_page=10`);
+}
+
+export async function getPRFiles(owner: string, repo: string, prNumber: number): Promise<GitHubPRFile[]> {
+  const files = await fetchGitHub<GitHubPRFile[]>(`/repos/${owner}/${repo}/pulls/${prNumber}/files`);
+  
+  // Limit to 10 files to prevent streaming issues
+  const limitedFiles = files.slice(0, 10);
+  
+  // Truncate patches very aggressively - 1KB per file max
+  return limitedFiles.map(file => ({
+    ...file,
+    // Limit patch to ~1KB per file to prevent streaming issues
+    patch: file.patch && file.patch.length > 1000 
+      ? file.patch.substring(0, 1000) + "\n... (truncated)"
+      : file.patch
+  }));
 }
