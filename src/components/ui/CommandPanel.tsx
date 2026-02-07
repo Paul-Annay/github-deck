@@ -23,7 +23,16 @@ const CommandPanel = ({
     warning: "border-neon-amber/50",
   };
 
-  const randomOpId = React.useMemo(() => (Math.random() * 1000).toFixed(0), []);
+  // Use deterministic ID from title to avoid hydration mismatch (Math.random differs on server vs client)
+  const opId = React.useMemo(() => {
+    let hash = 0;
+    const str = title || "unknown";
+    for (let i = 0; i < str.length; i++) {
+      hash = ((hash << 5) - hash) + str.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash % 1000).toString().padStart(3, "0");
+  }, [title]);
 
   return (
     <section
@@ -58,7 +67,7 @@ const CommandPanel = ({
         
         {/* Technical Deco on Header */}
         <div className="flex items-center gap-4 text-[10px] font-mono text-muted-foreground/40 font-bold" aria-hidden="true">
-           <span>OP-{randomOpId}</span>
+           <span>OP-{opId}</span>
            <div className="flex gap-1">
              <div className="h-4 w-1 bg-current opacity-20" />
              <div className="h-4 w-2 bg-current opacity-20" />

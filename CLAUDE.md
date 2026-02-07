@@ -45,7 +45,7 @@ This is a Next.js 15 app with Tambo AI integration for building generative UI/UX
    - Tools have schemas defining their inputs and outputs
 
 3. **Provider Pattern**
-   - `TamboProvider` wraps the app in `src/app/layout.tsx`
+   - `TamboProvider` wraps the app in `src/app/page.tsx`
    - Provides API key, registered components, and tools to the entire app
 
 4. **Streaming Architecture**
@@ -60,7 +60,7 @@ src/
 ├── app/ # Next.js App Router pages
 │ ├── chat/ # Chat interface route
 │ ├── interactables/ # Interactive components demo
-│ └── layout.tsx # Root layout with TamboProvider
+│ └── layout.tsx # Root layout
 ├── components/
 │ ├── tambo/ # Tambo-specific components
 │ │ ├── graph.tsx # Recharts data visualization
@@ -71,8 +71,8 @@ src/
 │ ├── tambo.ts # CENTRAL CONFIG: Component & tool registration
 │ ├── thread-hooks.ts # Custom thread management hooks
 │ └── utils.ts # Utility functions
-└── services/
-└── population-stats.ts # Demo data service
+├── services/
+│ └── github/ # GitHub API client
 
 ```
 
@@ -94,7 +94,7 @@ src/
    - Register in `src/lib/tambo.ts` components array
 
 2. **Adding New Tools**
-   - Implement tool function in `src/services/`
+   - Implement tool function in `src/lib/` or `src/services/`
    - Define Zod schema for inputs/outputs
    - Register in `src/lib/tambo.ts` tools array
 
