@@ -46,7 +46,7 @@ import {
 } from "./text-editor";
 
 // Lazy load DictationButton for code splitting (framework-agnostic alternative to next/dynamic)
-// eslint-disable-next-line @typescript-eslint/promise-function-async
+ 
 const LazyDictationButton = React.lazy(() => import("./dictation-button"));
 
 /**

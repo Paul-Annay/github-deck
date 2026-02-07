@@ -15,6 +15,7 @@ import { TamboProvider } from "@tambo-ai/react";
  *
  * @see {@link https://github.com/tambo-ai/tambo/blob/main/CONTRIBUTING.md} for instructions on running the API server locally.
  */
+
 export default function Home() {
   // Load MCP server configurations
   const mcpServers = useMcpServers();

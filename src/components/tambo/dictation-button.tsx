@@ -30,6 +30,7 @@ export default function DictationButton() {
 
   useEffect(() => {
     if (transcript && transcript !== lastProcessedTranscript) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setLastProcessedTranscript(transcript);
       setValue((prev) => prev + " " + transcript);
     }

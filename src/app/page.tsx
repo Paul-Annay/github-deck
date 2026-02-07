@@ -5,8 +5,10 @@ import { useMcpServers } from "@/components/tambo/mcp-config-modal";
 import { components, tools } from "@/lib/tambo";
 import { TamboProvider } from "@tambo-ai/react";
 import CommandPanel from "@/components/ui/CommandPanel";
+import { MainViewscreen } from "@/components/tambo/insights/MainViewscreen";
 
 import { ApiKeyCheck } from "@/components/ApiKeyCheck";
+
 
 export default function Home() {
   // Load MCP server configurations
@@ -59,18 +61,13 @@ export default function Home() {
             <MessageThreadFull className="h-full" />
           </CommandPanel>
 
-          {/* Right Panel: Data Visualizations (Placeholder for now) */}
+          {/* Right Panel: Main Viewscreen */}
           <CommandPanel 
             title="MAIN VIEWSCREEN" 
             className="lg:col-span-8 flex flex-col min-h-0"
-            status="standby"
+            status="active"
           >
-             <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground/50 gap-4 p-4">
-                <div className="w-24 h-24 rounded-full border-2 border-dashed border-current animate-[spin_10s_linear_infinite]" />
-                <p className="font-mono text-sm tracking-widest animate-pulse">
-                  AWAITING DATA STREAM...
-                </p>
-             </div>
+            <MainViewscreen />
           </CommandPanel>
         
         </div>

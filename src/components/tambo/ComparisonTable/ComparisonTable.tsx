@@ -99,6 +99,11 @@ export const ComparisonTable = React.forwardRef<HTMLDivElement, ComparisonTableP
             </thead>
             <tbody>
               {rows.map((row, rowIdx) => {
+                // Guard against missing values array
+                if (!row.values || !Array.isArray(row.values)) {
+                  return null;
+                }
+                
                 const bestIdx = findBestValue(row.values);
                 
                 return (

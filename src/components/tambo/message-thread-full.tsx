@@ -22,7 +22,7 @@ import { ThreadContainer, useThreadContainerContext } from "./thread-container";
 import {
   ThreadContent,
   ThreadContentMessages,
-} from "@/components/tambo/thread-content";
+} from "@/components/tambo/thread-content-custom";
 import {
   ThreadHistory,
   ThreadHistoryHeader,

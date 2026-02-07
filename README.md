@@ -2,6 +2,26 @@
 
 An AI-powered GitHub repository explorer built with Next.js and Tambo. Chat with an AI assistant to analyze repos, visualize commit activity, and explore contributors—all with a command-center aesthetic.
 
+## 🏆 Hackathon Features
+
+### Interactable Components
+This project showcases **2 production-ready interactable components** that demonstrate true bi-directional control:
+
+1. **InsightCardStack** - AI-generated insight cards users can dismiss
+2. **ComparisonBuilder** - Build repo comparisons collaboratively with AI
+
+**The Innovation**: Users click, AI responds. AI updates, users see it instantly. True collaborative intelligence.
+
+### Advanced AI Insights
+The `generateInsights` tool provides intelligent analysis:
+- Repository maturity and growth velocity
+- Community engagement and contributor diversity
+- Activity patterns and staleness warnings
+- Language-specific recommendations
+- Severity-based alerting (critical/warning/info/success)
+
+See [FEATURES.md](./docs/FEATURES.md) for complete feature list and [HACKATHON_SUBMISSION.md](./docs/HACKATHON_SUBMISSION.md) for hackathon details.
+
 ## Get Started
 
 1. `npm install`
@@ -13,7 +33,13 @@ An AI-powered GitHub repository explorer built with Next.js and Tambo. Chat with
 
    Or run `npx tambo init` to set up Tambo.
 
-3. Run `npm run dev` and go to `localhost:3000` to use the app!
+3. **Configure the AI Agent** (CRITICAL):
+   - Go to [Tambo Dashboard](https://tambo.co/dashboard) → Your Project → Settings → Agent Configuration
+   - Paste the contents of `SYSTEM_PROMPT.md` into the **Custom Instructions** field
+   - This ensures the AI renders UI components instead of text responses
+   - See [TAMBO_CONFIGURATION.md](./docs/TAMBO_CONFIGURATION.md) for detailed setup
+
+4. Run `npm run dev` and go to `localhost:3000` to use the app!
 
 ## Tambo CLI
 

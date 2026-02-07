@@ -32,6 +32,9 @@
   --color-container: var(--container);
   --color-backdrop: var(--backdrop);
   --color-muted-backdrop: var(--muted-backdrop);
+  
+  /* Command Deck Custom Colors */
+  --color-neon-cyan: 184 100% 50%;
 }
 
 :root {
