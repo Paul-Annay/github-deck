@@ -121,72 +121,71 @@ export const DataCard = React.forwardRef<HTMLDivElement, DataCardProps>(
     };
 
     return (
-      <div ref={ref} className={cn("w-full", className)} {...props}>
+      <div ref={ref} className={cn("w-full border border-neon-cyan/20 bg-card/50", className)} {...props}>
         {title && (
-          <h2 className="text-lg font-medium font-mono text-foreground mb-3 tracking-widest uppercase">{title}</h2>
+          <div className="p-4 border-b border-neon-cyan/20">
+            <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
+              {title}
+            </h3>
+          </div>
         )}
 
-        <div className="space-y-2">
+        <div className="p-4 space-y-2">
           {options?.map((card, index) => (
             <div
               key={`${card.id || "card"}-${index}`}
-              className="border-b border-border pb-2 last:border-0"
+              className={cn(
+                "group flex items-start p-3 border transition-all duration-200",
+                state && state.selectedValues.includes(card.value)
+                  ? "border-neon-cyan/30 bg-neon-cyan/5"
+                  : "border-border bg-background/50 hover:border-neon-cyan/50 hover:bg-card/80"
+              )}
             >
               <div
-                className={cn(
-                  "group flex items-start p-1.5 rounded-sm transition-colors",
-                  state &&
-                    state.selectedValues.includes(card.value) &&
-                    "bg-primary/10 border border-primary/30",
-                )}
+                className="flex-shrink-0 mr-3 mt-0.5 cursor-pointer"
+                onClick={() => handleToggleCard(card.value)}
               >
                 <div
-                  className="flex-shrink-0 mr-3 mt-0.5 cursor-pointer"
-                  onClick={() => handleToggleCard(card.value)}
-                >
-                  <div
-                    className={cn(
-                      "w-4 h-4 border rounded-sm flex items-center justify-center transition-colors",
-                      state && state.selectedValues.includes(card.value)
-                        ? "bg-neon-cyan border-neon-cyan text-void-black"
-                        : "border-muted-foreground/50 hover:border-primary/50",
-                    )}
-                  >
-                    {state && state.selectedValues.includes(card.value) && (
-                      <Check className="h-2.5 w-2.5" />
-                    )}
-                  </div>
-                </div>
-                <div
-                  className="flex-1 cursor-pointer"
-                  onClick={() =>
-                    card.url
-                      ? handleNavigate(card.url)
-                      : handleToggleCard(card.value)
-                  }
-                >
-                  <h3
-                    className={cn(
-                      "text-primary font-medium text-sm font-mono",
-                      "group-hover:text-primary/90",
-                      state &&
-                        state.selectedValues.includes(card.value) &&
-                        "text-neon-cyan",
-                    )}
-                  >
-                    {card.label}
-                  </h3>
-                  {card.description && (
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                      {card.description}
-                    </p>
+                  className={cn(
+                    "w-4 h-4 border rounded-sm flex items-center justify-center transition-colors",
+                    state && state.selectedValues.includes(card.value)
+                      ? "bg-neon-cyan border-neon-cyan text-void-black"
+                      : "border-muted-foreground/50 hover:border-neon-cyan/50",
                   )}
-                  {card.url && (
-                    <span className="text-xs text-neon-amber/80 mt-1 block truncate opacity-80 font-mono">
-                      {card.url}
-                    </span>
+                >
+                  {state && state.selectedValues.includes(card.value) && (
+                    <Check className="h-2.5 w-2.5" />
                   )}
                 </div>
+              </div>
+              <div
+                className="flex-1 cursor-pointer"
+                onClick={() =>
+                  card.url
+                    ? handleNavigate(card.url)
+                    : handleToggleCard(card.value)
+                }
+              >
+                <h4
+                  className={cn(
+                    "text-sm font-mono font-medium",
+                    state && state.selectedValues.includes(card.value)
+                      ? "text-neon-cyan"
+                      : "text-foreground group-hover:text-neon-cyan",
+                  )}
+                >
+                  {card.label}
+                </h4>
+                {card.description && (
+                  <p className="text-xs text-muted-foreground mt-1 leading-relaxed font-mono">
+                    {card.description}
+                  </p>
+                )}
+                {card.url && (
+                  <span className="text-xs text-neon-amber/80 mt-1 block truncate font-mono">
+                    {card.url}
+                  </span>
+                )}
               </div>
             </div>
           ))}

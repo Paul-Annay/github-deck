@@ -121,7 +121,7 @@ function ReleaseNoteBuilderBase(props: ReleaseNoteBuilderProps) {
 
   if (!props.prs || props.prs.length === 0) {
     return (
-      <div className="border border-border bg-background/50 p-4">
+      <div className="w-full border border-neon-cyan/20 bg-card/50 p-4">
         <h3 className="text-sm font-mono font-bold tracking-widest mb-4 text-neon-cyan/80 uppercase border-b border-neon-cyan/20 pb-2">
           {props.title}
         </h3>
@@ -133,37 +133,37 @@ function ReleaseNoteBuilderBase(props: ReleaseNoteBuilderProps) {
   }
 
   return (
-    <div className="space-y-3">
-      {/* Header */}
-      <div className="border border-border bg-background/50 p-4">
-        <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase border-b border-neon-cyan/20 pb-2 mb-3">
+    <div className="w-full border border-neon-cyan/20 bg-card/50">
+      {/* Integrated Header with Controls */}
+      <div className="p-4 space-y-3 border-b border-neon-cyan/20">
+        <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
           {props.title}
           {props.version && (
             <span className="ml-2 text-muted-foreground text-xs">v{props.version}</span>
           )}
         </h3>
         
-        <div className="flex items-center justify-between">
-          <div className="text-xs font-mono text-muted-foreground">
+        <div className="flex items-center justify-between text-xs font-mono text-muted-foreground">
+          <span>
             {selectedPRs.size} of {props.prs.length} PRs selected
-          </div>
+          </span>
           <div className="flex gap-2">
             <button
               onClick={selectAll}
-              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-neon-cyan/50"
+              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-neon-cyan/50 transition-all uppercase"
             >
               Select All
             </button>
             <button
               onClick={clearAll}
-              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-destructive/50"
+              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-destructive/50 transition-all uppercase"
             >
               Clear
             </button>
             <button
               onClick={copyToClipboard}
               disabled={selectedPRs.size === 0}
-              className="px-2 py-1 text-xs font-mono border border-neon-cyan bg-neon-cyan/20 text-neon-cyan hover:bg-neon-cyan/30 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-2 py-1 text-xs font-mono border border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all uppercase"
             >
               Copy Markdown
             </button>
@@ -172,7 +172,7 @@ function ReleaseNoteBuilderBase(props: ReleaseNoteBuilderProps) {
       </div>
 
       {/* PR List */}
-      <div className="space-y-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="space-y-2 max-h-[600px] overflow-y-auto p-4 custom-scrollbar">
         {props.prs.map((pr) => {
           const isSelected = selectedPRs.has(pr.number);
           const category = categories.get(pr.number);
@@ -263,9 +263,9 @@ function ReleaseNoteBuilderBase(props: ReleaseNoteBuilderProps) {
 
       {/* Preview */}
       {selectedPRs.size > 0 && (
-        <div className="border border-neon-cyan/30 bg-neon-cyan/5 p-3">
+        <div className="p-4 border-t border-neon-cyan/20 bg-neon-cyan/5">
           <div className="text-xs font-mono">
-            <div className="text-neon-cyan font-bold mb-2">RELEASE NOTES PREVIEW</div>
+            <div className="text-neon-cyan font-bold mb-2 uppercase tracking-wider">Release Notes Preview</div>
             <pre className="text-foreground/80 whitespace-pre-wrap overflow-x-auto custom-scrollbar max-h-[300px]">
               {generateMarkdown()}
             </pre>

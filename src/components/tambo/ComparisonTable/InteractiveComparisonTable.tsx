@@ -8,7 +8,6 @@ import { cn } from "@/lib/utils";
 
 const interactiveComparisonTableSchema = comparisonTableSchema.extend({
   enableSorting: z.boolean().default(true).describe("Allow users to sort by columns"),
-  enableRowSelection: z.boolean().default(false).describe("Allow users to select rows"),
   enableExport: z.boolean().default(false).describe("Allow users to export data"),
 });
 
@@ -17,13 +16,11 @@ type InteractiveComparisonTableProps = z.infer<typeof interactiveComparisonTable
 function InteractiveComparisonTableBase(props: InteractiveComparisonTableProps) {
   const [sortColumn, setSortColumn] = useState<number | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
-  const [selectedRows, setSelectedRows] = useState<Set<number>>(new Set());
 
   // Expose state to Tambo
   useTamboComponentState(JSON.stringify({
     sortColumn,
     sortDirection,
-    selectedRows: Array.from(selectedRows),
   }));
 
   // Sort rows based on selected column
@@ -62,17 +59,7 @@ function InteractiveComparisonTableBase(props: InteractiveComparisonTableProps) 
     }
   };
 
-  const toggleRowSelection = (rowIndex: number) => {
-    setSelectedRows(prev => {
-      const next = new Set(prev);
-      if (next.has(rowIndex)) {
-        next.delete(rowIndex);
-      } else {
-        next.add(rowIndex);
-      }
-      return next;
-    });
-  };
+
 
   const exportToCSV = () => {
     if (!props.headers || !sortedRows) return;
@@ -112,56 +99,50 @@ function InteractiveComparisonTableBase(props: InteractiveComparisonTableProps) 
     URL.revokeObjectURL(url);
   };
 
+  // If no interactive features are enabled, just use the base component
+  if (!props.enableSorting && !props.enableExport) {
+    return <ComparisonTable {...props} />;
+  }
+
   return (
     <div className="space-y-3">
       {/* Controls */}
-      <div className="border border-border bg-background/50 p-3 flex flex-wrap gap-3 items-center justify-between">
-        <div className="flex items-center gap-3">
-          {props.enableSorting && sortColumn !== null && (
-            <div className="text-xs font-mono text-muted-foreground">
-              Sorted by: <span className="text-neon-cyan">{props.headers?.[sortColumn]}</span>
-              <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>
-            </div>
-          )}
-          
-          {props.enableRowSelection && selectedRows.size > 0 && (
-            <div className="text-xs font-mono text-neon-cyan">
-              {selectedRows.size} row{selectedRows.size !== 1 ? "s" : ""} selected
-            </div>
-          )}
-        </div>
+      <div className="flex flex-wrap gap-3 items-center justify-between">
+        {props.enableSorting && sortColumn !== null && (
+          <div className="text-xs font-mono text-muted-foreground">
+            Sorted by: <span className="text-neon-cyan">{props.headers?.[sortColumn]}</span>
+            <span className="ml-1">{sortDirection === "asc" ? "↑" : "↓"}</span>
+          </div>
+        )}
 
         {props.enableExport && (
           <div className="flex gap-2">
             <button
               onClick={exportToCSV}
-              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-neon-cyan/50 transition-colors"
+              className="px-2 py-1 text-xs font-mono border border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 transition-all uppercase"
             >
-              Export CSV
+              CSV
             </button>
             <button
               onClick={exportToJSON}
-              className="px-2 py-1 text-xs font-mono border border-border bg-background/50 text-foreground hover:border-neon-cyan/50 transition-colors"
+              className="px-2 py-1 text-xs font-mono border border-neon-cyan/50 bg-neon-cyan/10 text-neon-cyan hover:bg-neon-cyan/20 transition-all uppercase"
             >
-              Export JSON
+              JSON
             </button>
           </div>
         )}
       </div>
 
-      {/* Enhanced Table */}
-      <div className="w-full p-4 bg-card/50 border border-neon-cyan/20">
+      {/* Enhanced Table with Interactive Features */}
+      <div className="w-full border border-neon-cyan/20 bg-card/50 p-4">
         <h3 className="text-sm font-mono font-bold tracking-widest mb-4 text-neon-cyan/80 uppercase border-b border-neon-cyan/20 pb-2">
           {props.title}
         </h3>
 
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto custom-scrollbar">
           <table className="w-full font-mono text-xs">
             <thead>
               <tr className="border-b border-neon-cyan/20">
-                {props.enableRowSelection && (
-                  <th className="py-2 px-2 w-8"></th>
-                )}
                 <th className="text-left py-2 px-3 text-muted-foreground font-bold tracking-wider uppercase">
                   METRIC
                 </th>
@@ -186,26 +167,11 @@ function InteractiveComparisonTableBase(props: InteractiveComparisonTableProps) 
               {sortedRows?.map((row, rowIdx) => {
                 if (!row.values || !Array.isArray(row.values)) return null;
                 
-                const isSelected = selectedRows.has(rowIdx);
-                
                 return (
                   <tr
                     key={rowIdx}
-                    className={cn(
-                      "border-b border-neon-cyan/10 hover:bg-neon-cyan/5 transition-colors",
-                      isSelected && "bg-neon-cyan/10"
-                    )}
+                    className="border-b border-neon-cyan/10 hover:bg-neon-cyan/5 transition-colors"
                   >
-                    {props.enableRowSelection && (
-                      <td className="py-2 px-2">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleRowSelection(rowIdx)}
-                          className="w-3 h-3 accent-neon-cyan"
-                        />
-                      </td>
-                    )}
                     <td className="py-2 px-3 text-foreground font-medium">
                       {row.metric}
                     </td>
@@ -224,33 +190,13 @@ function InteractiveComparisonTableBase(props: InteractiveComparisonTableProps) 
           </table>
         </div>
       </div>
-
-      {/* Selection Summary */}
-      {props.enableRowSelection && selectedRows.size > 0 && (
-        <div className="border border-neon-cyan/30 bg-neon-cyan/5 p-3 animate-in fade-in slide-in-from-bottom-2">
-          <div className="text-xs font-mono">
-            <div className="text-neon-cyan font-bold mb-2">SELECTED METRICS</div>
-            <div className="space-y-1">
-              {Array.from(selectedRows).map(rowIdx => {
-                const row = sortedRows?.[rowIdx];
-                if (!row) return null;
-                return (
-                  <div key={rowIdx} className="text-foreground/80">
-                    • {row.metric}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
 export const InteractiveComparisonTable = withInteractable(InteractiveComparisonTableBase, {
   componentName: "InteractiveComparisonTable",
-  description: "Interactive comparison table with column sorting, row selection, and export capabilities. AI can see user selections and sorting preferences.",
+  description: "Interactive comparison table with column sorting and export capabilities. AI can see user sorting preferences.",
   propsSchema: interactiveComparisonTableSchema,
 });
 

@@ -79,13 +79,13 @@ function InsightCardStackBase(props: InsightCardStackProps) {
 
   if (visibleInsights.length === 0) {
     return (
-      <div className="border border-border bg-background/50 backdrop-blur-sm">
-        <div className="border-b border-border bg-background/80 px-4 py-2">
-          <h3 className="text-xs font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
+      <div className="w-full border border-neon-cyan/20 bg-card/50">
+        <div className="p-4 border-b border-neon-cyan/20">
+          <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
             TACTICAL INSIGHTS
           </h3>
         </div>
-        <div className="p-4 flex flex-col items-center justify-center text-muted-foreground/50 gap-2">
+        <div className="p-8 flex flex-col items-center justify-center text-muted-foreground/50 gap-2">
           <div className="w-12 h-12 border border-dashed border-current rounded-full flex items-center justify-center animate-pulse">
             <span className="text-xl">◎</span>
           </div>
@@ -96,9 +96,9 @@ function InsightCardStackBase(props: InsightCardStackProps) {
   }
 
   return (
-    <div className="border border-border bg-background/50 backdrop-blur-sm">
-      <div className="border-b border-border bg-background/80 px-4 py-2 flex items-center justify-between">
-        <h3 className="text-xs font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
+    <div className="w-full border border-neon-cyan/20 bg-card/50">
+      <div className="p-4 border-b border-neon-cyan/20 flex items-center justify-between">
+        <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
           TACTICAL INSIGHTS
         </h3>
         <span className="text-xs font-mono text-muted-foreground">
@@ -106,7 +106,7 @@ function InsightCardStackBase(props: InsightCardStackProps) {
         </span>
       </div>
       
-      <div className="p-3 space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
+      <div className="p-4 space-y-2 max-h-[400px] overflow-y-auto custom-scrollbar">
         {visibleInsights.map((insight) => {
           const styles = getTypeStyles(insight.type);
           return (

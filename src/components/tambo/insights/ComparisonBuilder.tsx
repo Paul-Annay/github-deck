@@ -50,9 +50,9 @@ function ComparisonBuilderBase(props: ComparisonBuilderProps) {
   };
 
   return (
-    <div className="border border-border bg-background/50 backdrop-blur-sm">
-      <div className="border-b border-border bg-background/80 px-4 py-2">
-        <h3 className="text-xs font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
+    <div className="w-full border border-neon-cyan/20 bg-card/50">
+      <div className="p-4 border-b border-neon-cyan/20">
+        <h3 className="text-sm font-mono font-bold tracking-widest text-neon-cyan/80 uppercase">
           COMPARISON BUILDER
         </h3>
       </div>

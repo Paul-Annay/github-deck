@@ -175,64 +175,66 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
 
   return (
     <div className="space-y-3">
-      {/* Controls */}
-      <div className="flex flex-wrap gap-3 items-center">
-        {/* Dataset Filters */}
-        {canFilter && (
-          <div className="flex flex-wrap gap-2">
-            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider self-center">
-              Datasets:
-            </span>
-            {props.data.datasets.map(dataset => (
-              <button
-                key={dataset.label}
-                onClick={() => toggleDataset(dataset.label)}
-                className={cn(
-                  "px-2 py-1 text-xs font-mono border transition-all",
-                  selectedDatasets.has(dataset.label)
-                    ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
-                    : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50"
-                )}
-              >
-                {selectedDatasets.has(dataset.label) ? "✓ " : ""}
-                {dataset.label}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Controls - only show if there are interactive features */}
+      {(canFilter || canTimeRange) && (
+        <div className="flex flex-wrap gap-3 items-center">
+          {/* Dataset Filters */}
+          {canFilter && (
+            <div className="flex flex-wrap gap-2">
+              <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider self-center">
+                Datasets:
+              </span>
+              {props.data.datasets.map(dataset => (
+                <button
+                  key={dataset.label}
+                  onClick={() => toggleDataset(dataset.label)}
+                  className={cn(
+                    "px-2 py-1 text-xs font-mono border transition-all uppercase",
+                    selectedDatasets.has(dataset.label)
+                      ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
+                      : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50"
+                  )}
+                >
+                  {selectedDatasets.has(dataset.label) ? "✓ " : ""}
+                  {dataset.label}
+                </button>
+              ))}
+            </div>
+          )}
 
-        {/* Time Range Selector */}
-        {canTimeRange && (
-          <div className="flex gap-2">
-            <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider self-center">
-              Range:
-            </span>
-            {availableTimeRanges.map(range => (
-              <button
-                key={range}
-                onClick={() => setTimeRange(range)}
-                className={cn(
-                  "px-2 py-1 text-xs font-mono border transition-all uppercase",
-                  timeRange === range
-                    ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
-                    : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50"
-                )}
-              >
-                {range}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+          {/* Time Range Selector */}
+          {canTimeRange && (
+            <div className="flex gap-2">
+              <span className="text-xs font-mono text-muted-foreground uppercase tracking-wider self-center">
+                Range:
+              </span>
+              {availableTimeRanges.map(range => (
+                <button
+                  key={range}
+                  onClick={() => setTimeRange(range)}
+                  className={cn(
+                    "px-2 py-1 text-xs font-mono border transition-all uppercase",
+                    timeRange === range
+                      ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
+                      : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50"
+                  )}
+                >
+                  {range}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Graph */}
       <Graph {...graphProps} data={finalData} />
 
       {/* Selected Point Details */}
       {enableDataPointClick && selectedPoint && (
-        <div className="border border-neon-cyan/30 bg-neon-cyan/5 p-3 animate-in fade-in slide-in-from-bottom-2">
+        <div className="border border-neon-cyan/30 bg-neon-cyan/5 p-3">
           <div className="text-xs font-mono">
-            <div className="text-neon-cyan font-bold mb-1">SELECTED DATA POINT</div>
+            <div className="text-neon-cyan font-bold mb-1 uppercase tracking-wider">Selected Data Point</div>
             <div className="text-foreground/80">
               {Object.entries(selectedPoint).map(([key, value]) => (
                 <div key={key} className="flex justify-between gap-4">
