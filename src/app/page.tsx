@@ -102,9 +102,9 @@ export default function Home() {
       <main className="h-screen w-full p-4 flex flex-col gap-4 overflow-hidden relative">
         <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
           <GridScan
-            scanColor="#00f0ff"
-            linesColor="#1a1a1a"
-            enablePost={true}
+           scanColor="#00FF41"
+           linesColor="#00FF41"
+           enablePost={true}           
           />
         </div>
 
