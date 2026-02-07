@@ -337,7 +337,7 @@ const MessageSuggestionsList = React.forwardRef<
     <div
       ref={ref}
       className={cn(
-        "flex space-x-2 overflow-x-auto pb-2 rounded-md bg-transparent min-h-[2.5rem]",
+        "flex gap-2 overflow-x-auto pb-2 rounded-md bg-transparent min-h-[2.5rem]",
         isGenerating ? "opacity-70" : "",
         className,
       )}
@@ -346,43 +346,47 @@ const MessageSuggestionsList = React.forwardRef<
     >
       {suggestions.length > 0
         ? suggestions.map((suggestion, index) => (
-            <Tooltip
+            <button
               key={suggestion.id}
-              content={
-                <span suppressHydrationWarning>
-                  {modKey}+{altKey}+{index + 1}
-                </span>
+              className={cn(
+                "py-2 px-2.5 rounded-sm text-xs transition-all cursor-pointer",
+                "border border-flat",
+                "hover:shadow-lg hover:shadow-accent/20",
+                getSuggestionButtonClassName({
+                  isGenerating,
+                  isSelected: selectedSuggestionId === suggestion.id,
+                }),
+              )}
+              onClick={async () =>
+                !isGenerating && (await accept({ suggestion }))
               }
-              side="top"
+              disabled={isGenerating}
+              data-suggestion-id={suggestion.id}
+              data-suggestion-index={index}
             >
-              <button
-                className={cn(
-                  "py-2 px-2.5 rounded-2xl text-xs transition-colors",
-                  "border border-flat",
-                  getSuggestionButtonClassName({
-                    isGenerating,
-                    isSelected: selectedSuggestionId === suggestion.id,
-                  }),
-                )}
-                onClick={async () =>
-                  !isGenerating && (await accept({ suggestion }))
-                }
-                disabled={isGenerating}
-                data-suggestion-id={suggestion.id}
-                data-suggestion-index={index}
-              >
-                <span className="font-medium">{suggestion.title}</span>
-              </button>
-            </Tooltip>
+              <span className="font-medium">{suggestion.title}</span>
+            </button>
           ))
         : // Render placeholder buttons when no suggestions are available
           placeholders.map((_, index) => (
             <div
               key={`placeholder-${index}`}
-              className="py-2 px-2.5 rounded-2xl text-xs border border-flat bg-muted/20 text-transparent animate-pulse"
+              className="relative py-2 px-2.5 rounded-sm text-xs border border-flat bg-background overflow-hidden m-0"
               data-placeholder-index={index}
+              style={{
+                width: '33.3%'
+              }}
             >
-              <span className="invisible">Placeholder</span>
+              <span className="invisible font-medium">Loading suggestion</span>
+              <div 
+                className="absolute inset-0"
+                style={{ 
+                  background: 'linear-gradient(90deg, transparent 0%, rgba(0, 240, 255, 0.2) 50%, transparent 100%)',
+                  backgroundSize: '200% 100%',
+                  animation: 'shimmer 2s ease-in-out infinite',
+                  animationDelay: `${index * 0.2}s`
+                }} 
+              />
             </div>
           ))}
     </div>
