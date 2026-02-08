@@ -609,7 +609,23 @@ export const GridScan: React.FC<GridScanProps> = ({
     lineStyle,
     lineJitter,
     scanDirection,
-    enablePost
+    enablePost,
+    bloomIntensity,
+    bloomSmoothing,
+    bloomThreshold,
+    chromaticAberration,
+    maxSpeed,
+    noiseIntensity,
+    scanDelay,
+    scanDuration,
+    scanGlow,
+    scanPhaseTaper,
+    scanSoftness,
+    skewScale,
+    smoothTime,
+    tiltScale,
+    yBoost,
+    yawScale
   ]);
 
   useEffect(() => {

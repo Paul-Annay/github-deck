@@ -1,7 +1,7 @@
 "use client";
 
 import { withInteractable, useTamboComponentState } from "@tambo-ai/react";
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { z } from "zod";
 import Graph from "./Graph";
 import { graphSchema } from "./Graph.types";
@@ -26,18 +26,22 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
   const [timeRange, setTimeRange] = useState<"all" | "week" | "month" | "quarter">("all");
   const [selectedPoint, setSelectedPoint] = useState<any>(null);
 
-  // Ensure all datasets are selected when data loads or changes
-  useEffect(() => {
+  // Initialize selected datasets from props data
+  const initialDatasets = useMemo(() => {
     if (props.data?.datasets) {
-      const allLabels = new Set(props.data.datasets.map(d => d.label));
-      setSelectedDatasets(prev => {
-        // Only update if the datasets have changed
-        const prevLabels = Array.from(prev).sort().join(',');
-        const newLabels = Array.from(allLabels).sort().join(',');
-        return prevLabels !== newLabels ? allLabels : prev;
-      });
+      return new Set(props.data.datasets.map(d => d.label));
     }
+    return new Set<string>();
   }, [props.data?.datasets]);
+
+  // Use a ref to track if we've initialized
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  // Initialize selectedDatasets only once when data first loads
+  if (!isInitialized && initialDatasets.size > 0) {
+    setSelectedDatasets(initialDatasets);
+    setIsInitialized(true);
+  }
 
   // Determine which features are actually usable based on data
   const canFilter = enableFiltering && props.data?.datasets && props.data.datasets.length > 1;

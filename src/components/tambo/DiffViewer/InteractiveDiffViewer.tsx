@@ -44,14 +44,13 @@ function InteractiveDiffViewerBase(props: InteractiveDiffViewerProps) {
     return filtered;
   }, [props.files, filterStatus, searchQuery]);
 
-  // Handle expand all toggle
-  useEffect(() => {
+  // Compute expanded files based on expandAll state
+  const effectiveExpandedFiles = useMemo(() => {
     if (expandAll) {
-      setExpandedFiles(new Set(filteredFiles.map(f => f.filename)));
-    } else {
-      setExpandedFiles(new Set());
+      return new Set(filteredFiles.map(f => f.filename));
     }
-  }, [expandAll, filteredFiles]);
+    return expandedFiles;
+  }, [expandAll, filteredFiles, expandedFiles]);
 
   // Expose state to Tambo
   useTamboComponentState(JSON.stringify({
@@ -59,7 +58,7 @@ function InteractiveDiffViewerBase(props: InteractiveDiffViewerProps) {
     searchQuery,
     expandAll,
     filteredCount: filteredFiles.length,
-    expandedCount: expandedFiles.size,
+    expandedCount: effectiveExpandedFiles.size,
   }));
 
   // Calculate stats
@@ -79,6 +78,8 @@ function InteractiveDiffViewerBase(props: InteractiveDiffViewerProps) {
   const totalDeletions = filteredFiles.reduce((sum, f) => sum + f.deletions, 0);
 
   const toggleFile = (filename: string) => {
+    // When toggling a file, disable expandAll mode
+    setExpandAll(false);
     setExpandedFiles(prev => {
       const next = new Set(prev);
       if (next.has(filename)) {
@@ -185,7 +186,7 @@ function InteractiveDiffViewerBase(props: InteractiveDiffViewerProps) {
             <FileChangeCard
               key={file.filename}
               file={file}
-              isExpanded={expandedFiles.has(file.filename)}
+              isExpanded={effectiveExpandedFiles.has(file.filename)}
               onToggle={() => toggleFile(file.filename)}
             />
           ))}
