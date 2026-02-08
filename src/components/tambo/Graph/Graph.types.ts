@@ -6,16 +6,17 @@ import { cva } from "class-variance-authority";
  */
 export const graphDataSchema = z.object({
   type: z.enum(["bar", "line", "pie"]).describe("Type of graph to render"),
-  labels: z.array(z.string()).describe("Labels for the graph"),
+  labels: z.array(z.string()).min(1, "Labels array must contain at least one element").describe("Labels for the graph (must not be empty)"),
   datasets: z
     .array(
       z.object({
         label: z.string().describe("Label for the dataset"),
-        data: z.array(z.number()).describe("Data points for the dataset"),
+        data: z.array(z.number()).min(1, "Data array must contain at least one value").describe("Data points for the dataset (must not be empty)"),
         color: z.string().optional().describe("Optional color for the dataset"),
       }),
     )
-    .describe("Data for the graph"),
+    .min(1, "Datasets array must contain at least one dataset")
+    .describe("Data for the graph (must not be empty)"),
 });
 
 /**

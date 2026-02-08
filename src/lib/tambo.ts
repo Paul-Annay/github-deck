@@ -157,7 +157,7 @@ export const tools: TamboTool[] = [
   {
     name: "getRepoOverview",
     description:
-      "CRITICAL FIRST STEP: Fetches repository details and recent commit activity. ALWAYS call this FIRST when user asks about any repository (e.g., 'tell me about react', 'analyze facebook/react'). MANDATORY WORKFLOW: After calling this tool, you MUST immediately: 1) Call getLanguageBreakdown and render a Graph component (type: 'pie') with the language data, 2) Call getWeeklyCommitActivity and render a Graph component (type: 'line') with commit trends, 3) Call getCommunityHealth, 4) Call generateInsights with the repo data, 5) Render InsightCardStack component with the insights. DO NOT just describe the data in text - you MUST render the actual UI components.",
+      "CRITICAL FIRST STEP: Fetches repository details and recent commit activity. ALWAYS call this FIRST when user asks about any repository (e.g., 'tell me about react', 'analyze facebook/react'). This returns basic repo info and recent commits. After receiving the data, proceed with the standard analysis workflow by calling other tools as needed (getLanguageBreakdown, getWeeklyCommitActivity, getCommunityHealth, generateInsights) and rendering their respective components.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const details = await getRepoDetails(owner, repo);
       const commits = await getRepoCommits(owner, repo);
@@ -199,7 +199,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getPullRequests",
-    description: "Fetches pull requests for a repository (10 per page). Use this to show PR activity, merged PRs, or open PRs. CRITICAL: After calling this tool, you MUST immediately render an InteractivePRViewer component with the pull requests data. DO NOT just list PRs in text - render the actual InteractivePRViewer component.",
+    description: "Fetches pull requests for a repository (10 per page). Use this to show PR activity, merged PRs, or open PRs. After receiving the data, render an InteractivePRViewer component with the pull requests data for the best user experience.",
     tool: async ({ owner, repo, state = "all", page = 1 }: { owner: string; repo: string; state?: "open" | "closed" | "all"; page?: number }) => {
       return getRepoPullRequests(owner, repo, state, page);
     },
@@ -284,7 +284,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getPRDiff",
-    description: "Fetches the file changes and diffs for a specific pull request. Use this when user wants to see what changed in a PR, view the diff, or review code changes. CRITICAL: After calling this tool, you MUST immediately render an InteractiveDiffViewer component with the file changes data. DO NOT just describe the changes in text - render the actual InteractiveDiffViewer component with syntax-highlighted diffs.",
+    description: "Fetches the file changes and diffs for a specific pull request. Use this when user wants to see what changed in a PR, view the diff, or review code changes. After receiving the data, render an InteractiveDiffViewer component with the file changes for syntax-highlighted diffs.",
     tool: async ({ owner, repo, prNumber }: { owner: string; repo: string; prNumber: number }) => {
       return getPRFiles(owner, repo, prNumber);
     },
@@ -297,7 +297,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getLanguageBreakdown",
-    description: "REQUIRED FOR REPO ANALYSIS: Fetches the language composition of a repository (bytes per language). ALWAYS call this when analyzing a repo. CRITICAL: After getting results, you MUST immediately render a Graph component with type='pie', title='LANGUAGE COMPOSITION', and data formatted as [{name: languageName, value: percentage}]. DO NOT just describe the languages in text - render the actual pie chart component.",
+    description: "Fetches the language composition of a repository (bytes per language). Call this when you need language data. After receiving the data, render a Graph component with type='pie', title='LANGUAGE COMPOSITION', and data formatted as [{name: languageName, value: percentage}]. Only call this tool once per repository analysis.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const languages = await getRepoLanguages(owner, repo);
       const total = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
@@ -328,7 +328,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getWeeklyCommitActivity",
-    description: "REQUIRED FOR REPO ANALYSIS: Fetches weekly commit counts for the last 52 weeks. ALWAYS call this when analyzing a repo or when user asks about activity/commits. CRITICAL: After getting results, you MUST immediately render a Graph component with type='line', title='52-WEEK COMMIT ACTIVITY', xAxisKey='week_date', and datasets=[{name: 'Commits', dataKey: 'total_commits', color: '#00f0ff'}]. DO NOT just describe the activity in text - render the actual line chart component.",
+    description: "Fetches weekly commit counts for the last 52 weeks to visualize development velocity over time. Call this when you need commit activity data. After receiving the data, render a Graph component with type='line', title='52-WEEK COMMIT ACTIVITY', xAxisKey='week_date', and datasets=[{name: 'Commits', dataKey: 'total_commits', color: '#00f0ff'}]. Only call this tool once per repository analysis.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const activity = await getCommitActivity(owner, repo);
       
@@ -360,7 +360,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getCommunityHealth",
-    description: "REQUIRED FOR REPO ANALYSIS: Fetches community health metrics including health score, documentation, code of conduct, contributing guidelines, and license info. ALWAYS call this when analyzing a repo to assess project maturity and community standards.",
+    description: "Fetches community health metrics including health score, documentation, code of conduct, contributing guidelines, and license info. Use this to assess project maturity and community standards. Only call this tool once per repository analysis.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const profile = await getCommunityProfile(owner, repo);
       
@@ -520,7 +520,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "generateInsights",
-    description: "Analyzes repository data and generates tactical insights with AI-powered pattern detection. Use this after fetching repo data. CRITICAL: After calling this tool, you MUST immediately render an InsightCardStack component with the insights array returned by this tool. DO NOT just list the insights in text - render the actual InsightCardStack component so users can see and interact with the insight cards.",
+    description: "Analyzes repository data and generates tactical insights with AI-powered pattern detection. Use this after fetching repo data to surface important findings. After receiving the insights, render an InsightCardStack component so users can see and interact with the insight cards.",
     tool: async ({ owner, repo, repoData }: { owner: string; repo: string; repoData: any }) => {
       const insights = [];
       
@@ -764,7 +764,7 @@ export const components: TamboComponent[] = [
   {
     name: "Graph",
     description:
-      "INTERACTIVE by default: Renders charts (bar, line, pie) with automatic interactive features when data supports them. Filtering is auto-enabled for 2+ datasets. Time range selection is auto-enabled for date-based line/bar charts. Users can toggle datasets and select time periods. Use this for all data visualization needs - it will automatically adapt to your data structure.",
+      "Renders interactive charts (bar, line, pie) with automatic features like filtering (for 2+ datasets) and time range selection (for date-based charts). Use this for data visualization. Call a data-fetching tool (getLanguageBreakdown, getWeeklyCommitActivity, etc.) before rendering to get the data. The schema requires non-empty labels and datasets arrays.",
     component: InteractiveGraph,
     propsSchema: interactiveGraphSchema,
   },
@@ -778,42 +778,42 @@ export const components: TamboComponent[] = [
   {
     name: "InsightCardStack",
     description:
-      "INTERACTABLE: Displays AI-generated insights as dismissible cards. AI can add new insights as it discovers patterns. Users can dismiss cards. Use this to surface important findings, warnings, or recommendations about the repository. ALWAYS use this after analyzing a repo with generateInsights tool.",
+      "Displays AI-generated insights as dismissible cards. Users can dismiss cards and AI can add new insights as patterns are discovered. Use this to surface important findings, warnings, or recommendations about the repository. Call generateInsights tool first to get the insights data.",
     component: InsightCardStack,
     propsSchema: insightCardStackSchema,
   },
   {
     name: "InteractivePRViewer",
     description:
-      "INTERACTABLE: Enhanced PR viewer with filtering, sorting, search, and pagination. IMPORTANT: When rendering this component, you MUST pass owner, repo, and initialState props along with the prs data. Example: {prs: result, owner: 'facebook', repo: 'react', initialState: 'all'}. Users can filter by state (only if initialState was 'all'), sort by various criteria, search PRs, and load more PRs with a 'Show More' button. The component fetches 10 PRs at a time and respects the initial state filter when loading more.",
+      "Enhanced PR viewer with filtering, sorting, search, and pagination. Call getPullRequests tool first to fetch the PR data. Users can filter by state (if initialState was 'all'), sort by various criteria, search PRs, and load more PRs with a 'Show More' button. The component fetches 10 PRs at a time and respects the initial state filter when loading more. Render with props: {prs: result, owner: 'facebook', repo: 'react', initialState: 'all'}.",
     component: InteractivePRViewer,
     propsSchema: interactivePRViewerSchema,
   },
   {
     name: "InteractiveComparisonTable",
     description:
-      "INTERACTABLE: Enhanced comparison table with column sorting, row selection, and export capabilities. Users can sort by any column, select specific metrics, and export to CSV/JSON. AI can see user preferences.",
+      "Enhanced comparison table with column sorting, row selection, and export capabilities. Users can sort by any column, select specific metrics, and export to CSV/JSON. Call getRepoOverview for each repository being compared first to fetch the data, then format and render the comparison table.",
     component: InteractiveComparisonTable,
     propsSchema: interactiveComparisonTableSchema,
   },
   {
     name: "InteractiveDiffViewer",
     description:
-      "INTERACTABLE: Enhanced diff viewer with file filtering, search, and view mode toggle. Users can filter by file status, search files, and toggle between split/unified views. AI can see user preferences.",
+      "Enhanced diff viewer with file filtering, search, and view mode toggle. Users can filter by file status, search files, and toggle between split/unified views. Call getPRDiff tool first to fetch the file changes and diffs for a pull request.",
     component: InteractiveDiffViewer,
     propsSchema: interactiveDiffViewerSchema,
   },
   {
     name: "IssueTriager",
     description:
-      "INTERACTABLE: Issue triage workflow component. Users can categorize issues, set priorities, and add notes. Perfect for organizing issue backlogs. AI can help with categorization and priority suggestions.",
+      "Issue triage workflow component. Users can categorize issues, set priorities, and add notes. Perfect for organizing issue backlogs. AI can help with categorization and priority suggestions.",
     component: IssueTriager,
     propsSchema: issueTriagerSchema,
   },
   {
     name: "ReleaseNoteBuilder",
     description:
-      "INTERACTABLE: Release note builder workflow component. Users can select PRs, categorize them, customize descriptions, and generate formatted release notes. AI can help with categorization and writing descriptions.",
+      "Release note builder workflow component. Users can select PRs, categorize them, customize descriptions, and generate formatted release notes. AI can help with categorization and writing descriptions.",
     component: ReleaseNoteBuilder,
     propsSchema: releaseNoteBuilderSchema,
   },
