@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ApiKeyCheck } from "@/components/ApiKeyCheck";
+import { GridScan } from "@/components/ui/GridScan/GridScan";
 
 export default function OnboardingPage() {
   const apiKey = process.env.NEXT_PUBLIC_TAMBO_API_KEY;
@@ -11,19 +12,36 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-screen h-full w-full overflow-y-auto overflow-x-hidden">
+    <div className="min-h-screen h-full w-full overflow-y-auto overflow-x-hidden mb-5">
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <GridScan
+           scanColor="#00F0FF"
+           linesColor="#00F0FF"
+           enablePost={true}           
+          />
+        </div>
       <main className="w-full p-4 md:p-8 relative h-full">
         {/* Background Grid Overlay */}
         <div className="fixed inset-0 bg-grid-overlay opacity-20 pointer-events-none -z-10" />
       
       {/* Animated corner accents */}
-      <div className="fixed top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-primary/30 animate-pulse pointer-events-none" />
+      {/* <div className="fixed top-0 left-0 w-32 h-32 border-t-2 border-l-2 border-primary/30 animate-pulse pointer-events-none" />
       <div className="fixed top-0 right-0 w-32 h-32 border-t-2 border-r-2 border-primary/30 animate-pulse delay-75 pointer-events-none" />
       <div className="fixed bottom-0 left-0 w-32 h-32 border-b-2 border-l-2 border-primary/30 animate-pulse delay-150 pointer-events-none" />
-      <div className="fixed bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary/30 animate-pulse pointer-events-none" />
+      <div className="fixed bottom-0 right-0 w-32 h-32 border-b-2 border-r-2 border-primary/30 animate-pulse pointer-events-none" /> */}
 
       {/* Content */}
-      <div className="relative z-10 max-w-6xl mx-auto space-y-16 py-12">
+      <div className="relative z-10 max-w-6xl mx-auto space-y-16 py-12 backdrop-blur-md bg-background/90 rounded-lg p-8 border-2 border-primary/50 shadow-[0_0_15px_rgba(0,240,255,0.15)]">
+        {/* Decorative Corner Brackets */}
+        {/* <div className="absolute top-0 left-0 h-4 w-12 border-t-2 border-l-2 border-primary opacity-80" aria-hidden="true"/>
+        <div className="absolute top-0 right-0 h-4 w-12 border-t-2 border-r-2 border-primary opacity-80" aria-hidden="true"/>
+        <div className="absolute bottom-0 left-0 h-4 w-8 border-b-2 border-l-2 border-primary opacity-80" aria-hidden="true"/>
+        <div className="absolute bottom-0 right-0 h-4 w-8 border-b-2 border-r-2 border-primary opacity-80" aria-hidden="true"/> */}
+        
+        {/* Decorative Notches */}
+        {/* <div className="absolute top-[50%] left-0 w-1 h-8 bg-primary opacity-20 -translate-y-1/2" aria-hidden="true" />
+        <div className="absolute top-[50%] right-0 w-1 h-8 bg-primary opacity-20 -translate-y-1/2" aria-hidden="true" /> */}
+        
         
         {/* Header */}
         <div className="text-center space-y-6">
@@ -66,7 +84,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Core Innovation */}
-        <div className="border-2 border-primary/30 bg-background/50 p-8 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
+        <div className="border-2 border-primary/30 bg-background/80 p-8 shadow-[0_0_30px_rgba(0,240,255,0.2)]">
           <div className="text-center space-y-4">
             <div className="text-sm text-primary font-mono tracking-wider">// CORE INNOVATION</div>
             <h2 className="text-3xl font-mono font-bold text-primary">TRUE BI-DIRECTIONAL INTERACTABLES</h2>
@@ -86,7 +104,7 @@ export default function OnboardingPage() {
           
           <div className="grid md:grid-cols-2 gap-6">
             {/* InsightCardStack */}
-            <div className="border border-primary/20 bg-background/30 p-6 space-y-4 hover:border-primary/40 transition-colors">
+            <div className="border border-primary/20 bg-background/80 p-6 space-y-4 hover:border-primary/40 transition-colors">
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="text-xl font-mono font-bold text-primary">InsightCardStack</h4>
@@ -115,7 +133,7 @@ export default function OnboardingPage() {
             </div>
 
             {/* ComparisonBuilder */}
-            <div className="border border-primary/20 bg-background/30 p-6 space-y-4 hover:border-primary/40 transition-colors">
+            <div className="border border-primary/20 bg-background/80 p-6 space-y-4 hover:border-primary/40 transition-colors">
               <div className="flex items-start justify-between">
                 <div>
                   <h4 className="text-xl font-mono font-bold text-primary">ComparisonBuilder</h4>
@@ -153,32 +171,32 @@ export default function OnboardingPage() {
           </div>
           
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">📊</div>
               <h4 className="font-mono font-bold text-primary">Graph</h4>
               <p className="text-xs text-muted-foreground">Bar, line, pie charts with Recharts</p>
             </div>
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">🔀</div>
               <h4 className="font-mono font-bold text-primary">PRViewer</h4>
               <p className="text-xs text-muted-foreground">Pull request list with filtering</p>
             </div>
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">⚖️</div>
               <h4 className="font-mono font-bold text-primary">ComparisonTable</h4>
               <p className="text-xs text-muted-foreground">Side-by-side repo metrics</p>
             </div>
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">📝</div>
               <h4 className="font-mono font-bold text-primary">DiffViewer</h4>
               <p className="text-xs text-muted-foreground">Syntax-highlighted code diffs</p>
             </div>
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">🎴</div>
               <h4 className="font-mono font-bold text-primary">DataCard</h4>
               <p className="text-xs text-muted-foreground">Clickable option cards</p>
             </div>
-            <div className="border border-primary/20 bg-background/30 p-4 text-center space-y-2">
+            <div className="border border-primary/20 bg-background/80 p-4 text-center space-y-2">
               <div className="text-3xl">🧠</div>
               <h4 className="font-mono font-bold text-primary">AI Insights</h4>
               <p className="text-xs text-muted-foreground">Advanced pattern detection</p>
@@ -188,7 +206,7 @@ export default function OnboardingPage() {
 
         {/* Key Features */}
         <div className="grid md:grid-cols-3 gap-6">
-          <div className="border border-primary/20 bg-background/30 p-6 space-y-3">
+          <div className="border border-primary/20 bg-background/80 p-6 space-y-3">
             <div className="text-primary font-mono text-sm tracking-wider">// ADVANCED AI</div>
             <h4 className="text-lg font-mono font-bold">Intelligent Insights</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
@@ -199,7 +217,7 @@ export default function OnboardingPage() {
             </ul>
           </div>
 
-          <div className="border border-primary/20 bg-background/30 p-6 space-y-3">
+          <div className="border border-primary/20 bg-background/80 p-6 space-y-3">
             <div className="text-primary font-mono text-sm tracking-wider">// GITHUB DATA</div>
             <h4 className="text-lg font-mono font-bold">Complete Analytics</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
@@ -210,7 +228,7 @@ export default function OnboardingPage() {
             </ul>
           </div>
 
-          <div className="border border-primary/20 bg-background/30 p-6 space-y-3">
+          <div className="border border-primary/20 bg-background/80 p-6 space-y-3">
             <div className="text-primary font-mono text-sm tracking-wider">// COMMAND DECK</div>
             <h4 className="text-lg font-mono font-bold">Tactical UX</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
@@ -223,7 +241,7 @@ export default function OnboardingPage() {
         </div>
 
         {/* Demo Queries */}
-        <div className="border-2 border-primary/20 bg-background/30 p-8 space-y-6">
+        <div className="border-2 border-primary/20 bg-background/80 p-8 space-y-6">
           <div className="text-center">
             <h3 className="text-2xl font-mono font-bold text-primary mb-2">TRY THESE QUERIES</h3>
             <p className="text-sm text-muted-foreground font-mono">Natural language commands that generate UI</p>

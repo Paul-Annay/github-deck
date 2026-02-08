@@ -9,6 +9,7 @@ import { MainViewscreen } from "@/components/tambo/insights/MainViewscreen";
 import { ApiKeyCheck } from "@/components/ApiKeyCheck";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import GridScan from "@/components/ui/GridScan/GridScan";
 
 const MIN_CHAT_WIDTH = 320;
 const MIN_VIEWSCREEN_WIDTH = 400;
@@ -78,6 +79,13 @@ export default function Home() {
       mcpServers={mcpServers}
     >
       <main className="h-screen w-full p-4 flex flex-col gap-4 overflow-hidden relative">
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-60">
+          <GridScan
+           scanColor="#00F0FF"
+           linesColor="#00F0FF"
+           enablePost={true}           
+          />
+        </div>
         {/* Background Grid Overlay (extra depth) */}
         <div className="absolute inset-0 bg-grid-overlay opacity-20 pointer-events-none z-0" />
 
