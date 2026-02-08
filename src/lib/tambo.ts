@@ -156,50 +156,82 @@ const gitHubPRFileSchema = z.object({
 export const tools: TamboTool[] = [
   {
     name: "getRepoOverview",
-    description:
-      "CRITICAL FIRST STEP: Fetches repository details and recent commit activity. ALWAYS call this FIRST when user asks about any repository (e.g., 'tell me about react', 'analyze facebook/react'). This returns basic repo info and recent commits. After receiving the data, proceed with the standard analysis workflow by calling other tools as needed (getLanguageBreakdown, getWeeklyCommitActivity, getCommunityHealth, generateInsights) and rendering their respective components.",
+    description: "Fetches repository metadata (stars, forks, issues). Call first when analyzing a repo.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const details = await getRepoDetails(owner, repo);
-      const commits = await getRepoCommits(owner, repo);
-      return { details, recent_commits: commits.slice(0, 10) };
+      
+      // Return only essential fields to minimize context usage
+      return {
+        name: details.name,
+        full_name: details.full_name,
+        description: details.description,
+        stargazers_count: details.stargazers_count,
+        forks_count: details.forks_count,
+        open_issues_count: details.open_issues_count,
+        created_at: details.created_at,
+        html_url: details.html_url,
+        owner: {
+          login: details.owner.login,
+        },
+      };
     },
     inputSchema: z.object({
       owner: z.string().describe("The owner of the repository (e.g. 'facebook')"),
       repo: z.string().describe("The name of the repository (e.g. 'react')"),
     }),
     outputSchema: z.object({
-      details: gitHubRepoSchema,
-      recent_commits: z.array(gitHubCommitSchema),
+      name: z.string(),
+      full_name: z.string(),
+      description: z.string().nullable(),
+      stargazers_count: z.number(),
+      forks_count: z.number(),
+      open_issues_count: z.number(),
+      created_at: z.string(),
+      html_url: z.string(),
+      owner: z.object({
+        login: z.string(),
+      }),
     }),
   },
   {
     name: "getCommitActivity",
-    description:
-      "Fetches recent commits for a repository to visualize activity trends.",
+    description: "Fetches up to 50 recent commits with details. Use for commit history lists, not time-series charts.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
-      return getRepoCommits(owner, repo);
+      const commits = await getRepoCommits(owner, repo);
+      // Return minimal commit data
+      return commits.map(c => ({
+        sha: c.sha.substring(0, 7),
+        message: c.commit.message.split('\n')[0], // First line only
+        author: c.commit.author.name,
+        date: c.commit.author.date,
+      }));
     },
     inputSchema: z.object({
-      owner: z.string(),
-      repo: z.string(),
+      owner: z.string().describe("Repository owner"),
+      repo: z.string().describe("Repository name"),
     }),
-    outputSchema: z.array(gitHubCommitSchema),
+    outputSchema: z.array(z.object({
+      sha: z.string(),
+      message: z.string(),
+      author: z.string(),
+      date: z.string(),
+    })),
   },
   {
     name: "getContributors",
-    description: "Fetches top contributors for a repository.",
+    description: "Fetches top 10 contributors with contribution counts. Use for contributor lists or bar charts.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       return getRepoContributors(owner, repo);
     },
     inputSchema: z.object({
-      owner: z.string(),
-      repo: z.string(),
+      owner: z.string().describe("Repository owner"),
+      repo: z.string().describe("Repository name"),
     }),
     outputSchema: z.array(gitHubContributorSchema),
   },
   {
     name: "getPullRequests",
-    description: "Fetches pull requests for a repository (10 per page). Use this to show PR activity, merged PRs, or open PRs. After receiving the data, render an InteractivePRViewer component with the pull requests data for the best user experience.",
+    description: "Fetches PRs with details (10 per page). Render with InteractivePRViewer component for filtering and pagination.",
     tool: async ({ owner, repo, state = "all", page = 1 }: { owner: string; repo: string; state?: "open" | "closed" | "all"; page?: number }) => {
       return getRepoPullRequests(owner, repo, state, page);
     },
@@ -213,10 +245,9 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getIssues",
-    description: "Fetches issues for a repository (10 per page). Returns minimal essential data to reduce context usage. Use this to show issue tracking, bug reports, or feature requests. For issue comments, use getIssueComments tool separately. For more issues, increment the page parameter.",
+    description: "Fetches issues (10 per page). Returns minimal data to save context. Use IssueTriager or DataCard to render.",
     tool: async ({ owner, repo, state = "all", page = 1 }: { owner: string; repo: string; state?: "open" | "closed" | "all"; page?: number }) => {
       const issues = await getRepoIssues(owner, repo, state, page);
-      // Return only essential fields to minimize context usage
       return issues.map(issue => ({
         number: issue.number,
         title: issue.title,
@@ -248,7 +279,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getIssueComments",
-    description: "Fetches comments for a specific issue. Use this when user wants to see discussion on an issue. Call this on-demand when user expands an issue to view comments.",
+    description: "Fetches comments for a specific issue. Use when user asks about issue discussion.",
     tool: async ({ owner, repo, issueNumber }: { owner: string; repo: string; issueNumber: number }) => {
       const { getIssueComments } = await import("@/services/github/client");
       return getIssueComments(owner, repo, issueNumber);
@@ -272,7 +303,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getReleases",
-    description: "Fetches recent releases for a repository. Use this to show version history and release notes.",
+    description: "Fetches recent releases. Use when user asks about versions or release notes.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       return getRepoReleases(owner, repo);
     },
@@ -284,7 +315,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getPRDiff",
-    description: "Fetches the file changes and diffs for a specific pull request. Use this when user wants to see what changed in a PR, view the diff, or review code changes. After receiving the data, render an InteractiveDiffViewer component with the file changes for syntax-highlighted diffs.",
+    description: "Fetches file changes for a PR. Render with InteractiveDiffViewer component for syntax-highlighted diffs.",
     tool: async ({ owner, repo, prNumber }: { owner: string; repo: string; prNumber: number }) => {
       return getPRFiles(owner, repo, prNumber);
     },
@@ -297,7 +328,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getLanguageBreakdown",
-    description: "Fetches the language composition of a repository (bytes per language). Call this when you need language data. After receiving the data, render a Graph component with type='pie', title='LANGUAGE COMPOSITION', and data formatted as [{name: languageName, value: percentage}]. Only call this tool once per repository analysis.",
+    description: "Fetches language composition with percentages. Render as pie chart using Graph component.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const languages = await getRepoLanguages(owner, repo);
       const total = Object.values(languages).reduce((sum, bytes) => sum + bytes, 0);
@@ -328,7 +359,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getWeeklyCommitActivity",
-    description: "Fetches weekly commit counts for the last 52 weeks to visualize development velocity over time. Call this when you need commit activity data. After receiving the data, render a Graph component with type='line', title='52-WEEK COMMIT ACTIVITY', xAxisKey='week_date', and datasets=[{name: 'Commits', dataKey: 'total_commits', color: '#00f0ff'}]. Only call this tool once per repository analysis.",
+    description: "Fetches weekly commit counts for last 52 weeks. Render as line chart using Graph component.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const activity = await getCommitActivity(owner, repo);
       
@@ -360,7 +391,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getCommunityHealth",
-    description: "Fetches community health metrics including health score, documentation, code of conduct, contributing guidelines, and license info. Use this to assess project maturity and community standards. Only call this tool once per repository analysis.",
+    description: "Fetches community health metrics (health %, license, docs). Use for project maturity assessment.",
     tool: async ({ owner, repo }: { owner: string; repo: string }) => {
       const profile = await getCommunityProfile(owner, repo);
       
@@ -404,7 +435,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "getContributorActivity",
-    description: "Fetches detailed contribution statistics for all contributors including weekly additions, deletions, and commit counts. Use this to analyze contributor patterns and identify top contributors over time.",
+    description: "Fetches detailed contributor stats with weekly activity. Use for time-series contributor analysis.",
     tool: async ({ owner, repo, limit = 10 }: { owner: string; repo: string; limit?: number }) => {
       const stats = await getContributorStats(owner, repo);
       
@@ -462,7 +493,7 @@ export const tools: TamboTool[] = [
   },
   {
     name: "searchRepos",
-    description: "Search GitHub repositories by query. Supports filtering by language, stars, topics, etc. Use this when users want to find repos, compare similar projects, or discover alternatives. Query examples: 'react stars:>10000', 'language:typescript', 'topic:machine-learning'.",
+    description: "Searches GitHub repos (supports syntax like 'stars:>1000'). Render with DataCard or InteractiveComparisonTable.",
     tool: async ({ 
       query, 
       sort = "stars", 
@@ -520,12 +551,11 @@ export const tools: TamboTool[] = [
   },
   {
     name: "generateInsights",
-    description: "Analyzes repository data and generates tactical insights with AI-powered pattern detection. Use this after fetching repo data to surface important findings. After receiving the insights, render an InsightCardStack component so users can see and interact with the insight cards.",
+    description: "Analyzes repo data and generates insight cards. Render with InsightCardStack component.",
     tool: async ({ owner, repo, repoData }: { owner: string; repo: string; repoData: any }) => {
       const insights = [];
       
-      if (repoData.details) {
-        const { stargazers_count, forks_count, open_issues_count, language, created_at } = repoData.details;
+      const { stargazers_count, forks_count, open_issues_count, created_at } = repoData;
         
         // Repository age analysis
         const createdDate = new Date(created_at);
@@ -612,28 +642,6 @@ export const tools: TamboTool[] = [
           });
         }
         
-        // Language-specific insights
-        if (language) {
-          const languageInsights: Record<string, string> = {
-            "TypeScript": "Strong type safety and modern JavaScript ecosystem. Excellent for large-scale applications.",
-            "JavaScript": "Flexible and widely adopted. Consider TypeScript migration for better maintainability.",
-            "Python": "Versatile language with strong data science and ML ecosystem. Great for rapid development.",
-            "Rust": "Memory-safe systems programming. Excellent performance and reliability guarantees.",
-            "Go": "Simple, fast, and great for concurrent systems. Strong standard library.",
-            "Java": "Enterprise-grade with mature ecosystem. Excellent for large-scale distributed systems.",
-          };
-          
-          if (languageInsights[language]) {
-            insights.push({
-              id: `language-${Date.now()}`,
-              type: "info",
-              title: `${language.toUpperCase()} STACK`,
-              message: languageInsights[language],
-              metric: language,
-            });
-          }
-        }
-        
         // Repository maturity analysis
         if (ageInDays < 180) {
           insights.push({
@@ -652,78 +660,6 @@ export const tools: TamboTool[] = [
             metric: `${ageInYears}y OLD`,
           });
         }
-      }
-      
-      // Commit activity analysis with patterns
-      if (repoData.recent_commits && repoData.recent_commits.length > 0) {
-        const commits = repoData.recent_commits;
-        const recentCommit = new Date(commits[0].commit.author.date);
-        const daysSinceLastCommit = Math.floor((Date.now() - recentCommit.getTime()) / (1000 * 60 * 60 * 24));
-        
-        // Analyze commit frequency
-        const commitDates = commits.map((c: any) => new Date(c.commit.author.date).getTime());
-        const oldestCommit = Math.min(...commitDates);
-        const newestCommit = Math.max(...commitDates);
-        const timeSpan = (newestCommit - oldestCommit) / (1000 * 60 * 60 * 24);
-        const commitsPerDay = commits.length / Math.max(timeSpan, 1);
-        
-        // Analyze commit authors diversity
-        const uniqueAuthors = new Set(commits.map((c: any) => c.commit.author.name)).size;
-        const authorDiversity = uniqueAuthors / commits.length;
-        
-        if (daysSinceLastCommit < 1) {
-          insights.push({
-            id: `activity-realtime-${Date.now()}`,
-            type: "success",
-            title: "REAL-TIME DEVELOPMENT",
-            message: `Last commit was ${daysSinceLastCommit === 0 ? 'today' : 'yesterday'}. ${commitsPerDay.toFixed(1)} commits/day with ${uniqueAuthors} active contributors. Highly active development.`,
-            metric: `${daysSinceLastCommit}d AGO`,
-          });
-        } else if (daysSinceLastCommit < 7) {
-          insights.push({
-            id: `activity-active-${Date.now()}`,
-            type: "success",
-            title: "ACTIVE DEVELOPMENT",
-            message: `Last commit ${daysSinceLastCommit} days ago. Repository shows consistent activity with ${uniqueAuthors} contributors.`,
-            metric: `${daysSinceLastCommit}d AGO`,
-          });
-        } else if (daysSinceLastCommit > 180) {
-          insights.push({
-            id: `activity-dormant-${Date.now()}`,
-            type: "critical",
-            title: "DORMANT REPOSITORY",
-            message: `Last commit was ${Math.floor(daysSinceLastCommit / 30)} months ago. Repository appears abandoned or in maintenance-only mode.`,
-            metric: `${Math.floor(daysSinceLastCommit / 30)}mo AGO`,
-          });
-        } else if (daysSinceLastCommit > 90) {
-          insights.push({
-            id: `activity-stale-${Date.now()}`,
-            type: "warning",
-            title: "LOW ACTIVITY DETECTED",
-            message: `Last commit was ${daysSinceLastCommit} days ago. Monitor for signs of project abandonment.`,
-            metric: `${daysSinceLastCommit}d AGO`,
-          });
-        }
-        
-        // Author diversity insights
-        if (authorDiversity > 0.5 && uniqueAuthors > 5) {
-          insights.push({
-            id: `diversity-high-${Date.now()}`,
-            type: "success",
-            title: "DIVERSE CONTRIBUTOR BASE",
-            message: `${uniqueAuthors} unique contributors in recent commits. High diversity (${(authorDiversity * 100).toFixed(0)}%) indicates healthy collaborative development.`,
-            metric: `${uniqueAuthors} AUTHORS`,
-          });
-        } else if (uniqueAuthors === 1) {
-          insights.push({
-            id: `diversity-solo-${Date.now()}`,
-            type: "warning",
-            title: "SINGLE MAINTAINER",
-            message: "All recent commits from one author. Consider building a contributor community for long-term sustainability.",
-            metric: "1 AUTHOR",
-          });
-        }
-      }
       
       // If no insights generated, provide a default
       if (insights.length === 0) {
@@ -763,57 +699,49 @@ export const tools: TamboTool[] = [
 export const components: TamboComponent[] = [
   {
     name: "Graph",
-    description:
-      "Renders interactive charts (bar, line, pie) with automatic features like filtering (for 2+ datasets) and time range selection (for date-based charts). Use this for data visualization. Call a data-fetching tool (getLanguageBreakdown, getWeeklyCommitActivity, etc.) before rendering to get the data. The schema requires non-empty labels and datasets arrays.",
+    description: "Renders bar/line/pie charts for numeric data. Requires: type, title, labels, datasets.",
     component: InteractiveGraph,
     propsSchema: interactiveGraphSchema,
   },
   {
     name: "DataCard",
-    description:
-      "A component that displays options as clickable cards with links and summaries with the ability to select multiple items.",
+    description: "Displays clickable cards with titles, descriptions, and links. Use for lists and navigation.",
     component: DataCard,
     propsSchema: dataCardSchema,
   },
   {
     name: "InsightCardStack",
-    description:
-      "Displays AI-generated insights as dismissible cards. Users can dismiss cards and AI can add new insights as patterns are discovered. Use this to surface important findings, warnings, or recommendations about the repository. Call generateInsights tool first to get the insights data.",
+    description: "Displays dismissible insight cards with severity levels (success/warning/info/critical).",
     component: InsightCardStack,
     propsSchema: insightCardStackSchema,
   },
   {
     name: "InteractivePRViewer",
-    description:
-      "Enhanced PR viewer with filtering, sorting, search, and pagination. Call getPullRequests tool first to fetch the PR data. Users can filter by state (if initialState was 'all'), sort by various criteria, search PRs, and load more PRs with a 'Show More' button. The component fetches 10 PRs at a time and respects the initial state filter when loading more. Render with props: {prs: result, owner: 'facebook', repo: 'react', initialState: 'all'}.",
+    description: "PR viewer with filtering, sorting, search, and pagination. Requires: prs, owner, repo.",
     component: InteractivePRViewer,
     propsSchema: interactivePRViewerSchema,
   },
   {
     name: "InteractiveComparisonTable",
-    description:
-      "Enhanced comparison table with column sorting, row selection, and export capabilities. Users can sort by any column, select specific metrics, and export to CSV/JSON. Call getRepoOverview for each repository being compared first to fetch the data, then format and render the comparison table.",
+    description: "Comparison table with sorting and CSV/JSON export. Requires: title, headers, rows.",
     component: InteractiveComparisonTable,
     propsSchema: interactiveComparisonTableSchema,
   },
   {
     name: "InteractiveDiffViewer",
-    description:
-      "Enhanced diff viewer with file filtering, search, and view mode toggle. Users can filter by file status, search files, and toggle between split/unified views. Call getPRDiff tool first to fetch the file changes and diffs for a pull request.",
+    description: "Code diff viewer with syntax highlighting and file filtering. Requires: files array.",
     component: InteractiveDiffViewer,
     propsSchema: interactiveDiffViewerSchema,
   },
   {
     name: "IssueTriager",
-    description:
-      "Issue triage workflow component. Users can categorize issues, set priorities, and add notes. Perfect for organizing issue backlogs. AI can help with categorization and priority suggestions.",
+    description: "Issue triage workflow for categorizing and prioritizing. Requires: issues array.",
     component: IssueTriager,
     propsSchema: issueTriagerSchema,
   },
   {
     name: "ReleaseNoteBuilder",
-    description:
-      "Release note builder workflow component. Users can select PRs, categorize them, customize descriptions, and generate formatted release notes. AI can help with categorization and writing descriptions.",
+    description: "Release note builder for creating changelogs. Requires: prs array, optional version.",
     component: ReleaseNoteBuilder,
     propsSchema: releaseNoteBuilderSchema,
   },

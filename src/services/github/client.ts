@@ -6,6 +6,7 @@ export interface GitHubRepo {
   forks_count: number;
   open_issues_count: number;
   language: string;
+  created_at: string;
   html_url: string;
   owner: {
     login: string;
