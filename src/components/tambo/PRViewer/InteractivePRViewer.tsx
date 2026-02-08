@@ -166,7 +166,7 @@ function InteractivePRViewerBase(props: InteractivePRViewerProps) {
       filtered = filtered.filter(pr => 
         pr.title.toLowerCase().includes(query) ||
         pr.number.toString().includes(query) ||
-        pr.user?.login.toLowerCase().includes(query)
+        pr.user?.login?.toLowerCase().includes(query)
       );
     }
 

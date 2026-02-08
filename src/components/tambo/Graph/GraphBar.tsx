@@ -18,21 +18,21 @@ const GraphBar = ({ chartData, validDatasets, showLegend }: GraphBarProps) => {
       />
       <RechartsCore.XAxis
         dataKey="name"
-        stroke="var(--muted-foreground)"
+        stroke="#ffffff"
         axisLine={false}
         tickLine={false}
         tick={{
-          fill: "var(--muted-foreground)",
+          fill: "#ffffff",
           fontSize: 10,
           fontFamily: "var(--font-geist-mono)",
         }}
       />
       <RechartsCore.YAxis
-        stroke="var(--muted-foreground)"
+        stroke="#ffffff"
         axisLine={false}
         tickLine={false}
         tick={{
-          fill: "var(--muted-foreground)",
+          fill: "#ffffff",
           fontSize: 10,
           fontFamily: "var(--font-geist-mono)",
         }}

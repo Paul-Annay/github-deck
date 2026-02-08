@@ -166,7 +166,9 @@ function IssueTriagerBase(props: IssueTriagerProps) {
 
           const statusColor = issue.state === "open"
             ? "text-neon-cyan border-neon-cyan/30 bg-neon-cyan/5"
-            : "text-muted-foreground border-muted-foreground/30 bg-muted/5";
+            : issue.state === "closed"
+            ? "text-muted-foreground border-muted-foreground/30 bg-muted/5"
+            : "text-yellow-500 border-yellow-500/30 bg-yellow-500/5";
 
           return (
             <div
@@ -189,7 +191,7 @@ function IssueTriagerBase(props: IssueTriagerProps) {
                     #{issue.number} {issue.title}
                   </h4>
                   <span className={cn("text-[10px] font-mono font-bold px-2 py-0.5 border whitespace-nowrap", statusColor)}>
-                    {issue.state.toUpperCase()}
+                    {issue.state?.toUpperCase() ?? "UNKNOWN"}
                   </span>
                 </div>
 

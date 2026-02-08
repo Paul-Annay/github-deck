@@ -214,8 +214,8 @@ function InteractiveGraphBase(props: InteractiveGraphProps) {
                   className={cn(
                     "px-2 py-1 text-xs font-mono border transition-all uppercase",
                     selectedDatasets.has(dataset.label)
-                      ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan text-white"
-                      : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50 text-white"
+                      ? "border-neon-cyan bg-neon-cyan/20 text-neon-cyan"
+                      : "border-border bg-background/50 text-muted-foreground hover:border-neon-cyan/50"
                   )}
                 >
                   {selectedDatasets.has(dataset.label) ? "✓ " : ""}
