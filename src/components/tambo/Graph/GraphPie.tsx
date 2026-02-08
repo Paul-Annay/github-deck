@@ -118,7 +118,7 @@ const GraphPie = ({
                     gap: "6px",
                     fontFamily: "var(--font-geist-mono)",
                     fontSize: "11px",
-                    color: "#cccccc",
+                    color: "#fff",
                   }}>
                     <span style={{ 
                       width: "12px", 
