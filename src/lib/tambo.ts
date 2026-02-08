@@ -524,7 +524,7 @@ export const tools: TamboTool[] = [
     tool: async ({ owner, repo, repoData }: { owner: string; repo: string; repoData: any }) => {
       const insights = [];
       
-      if (repoData.details) {
+      if (repoData?.details) {
         const { stargazers_count, forks_count, open_issues_count, language, created_at } = repoData.details;
         
         // Repository age analysis
